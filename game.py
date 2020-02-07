@@ -159,6 +159,15 @@ class HexBoard:
                     cv.FONT_HERSHEY_SIMPLEX,
                     4,
                     (0, 0, 0),
+                    16,
+                )
+                cv.putText(
+                    canvas,
+                    str(i) + chr(ord('a') + j),
+                    (w + int(hex_long / 1.75), h + hex_short + int(hex_diag / 1.5)),
+                    cv.FONT_HERSHEY_SIMPLEX,
+                    4,
+                    (255, 255, 255),
                     4,
                 )
 
