@@ -2,26 +2,25 @@ import numpy as np
 from hex_skeleton import HexBoard
 
 # sanity check that wins are detected
-print("Check")
 for i in range(0, 2):
     winner = HexBoard.RED if i == 0 else HexBoard.BLUE
-    looser = HexBoard.BLUE if i == 0 else HexBoard.RED
+    loser = HexBoard.BLUE if i == 0 else HexBoard.RED
     board = HexBoard(3)
-    board.place((1, 1), looser)
-    board.place((2, 1), looser)
-    board.place((1, 2), looser)
-    board.place((2, 2), looser)
+    board.place((1, 1), loser)
+    board.place((2, 1), loser)
+    board.place((1, 2), loser)
+    board.place((2, 2), loser)
     board.place((0, 0), winner)
     board.place((1, 0), winner)
     board.place((2, 0), winner)
     board.place((0, 1), winner)
     board.place((0, 2), winner)
     assert (board.check_win(winner) is True)
-    assert (board.check_win(looser) is False)
+    assert (board.check_win(loser) is False)
     board.print()
-endable_board = HexBoard(4)
 
 # sanity check that random play will at some point end the game
+endable_board = HexBoard(4)
 while not endable_board.game_over:
     endable_board.place((np.random.randint(0, 4), np.random.randint(0, 4)), HexBoard.RED)
 assert (endable_board.game_over is True)
@@ -37,6 +36,8 @@ assert (neighbor_check.get_neighbors((1, 1)) == [(0, 1), (2, 1), (0, 2), (2, 0),
 assert (neighbor_check.get_neighbors((3, 4)) == [(2, 4), (4, 4), (4, 3), (3, 3)])
 assert (neighbor_check.get_neighbors((4, 3)) == [(3, 3), (3, 4), (4, 4), (4, 2)])
 assert (neighbor_check.get_neighbors((4, 4)) == [(3, 4), (4, 3)])
+neighbor_check_11 = HexBoard(5)
+assert (neighbor_check_11.get_neighbors((4, 4)) == [(3, 4), (4, 3)])
 
 neighbor_check_small = HexBoard(2)
 assert (neighbor_check_small.get_neighbors((0, 0)) == [(1, 0), (0, 1)])
