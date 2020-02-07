@@ -26,8 +26,8 @@ class HexBoard:
         return self.board[coordinates]
 
     def exists(self, coordinates):
-        for i in (0, 1):
-            if coordinates[i] < 0 or coordinates[i] > self.size - 1:
+        for coordinate in coordinates:
+            if coordinate < 0 or coordinate > self.size - 1:
                 return False
         return True
 
