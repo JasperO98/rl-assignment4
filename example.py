@@ -1,5 +1,5 @@
 import numpy as np
-from hex_skeleton import HexBoard
+from game import HexBoard
 
 # sanity check that wins are detected
 for i in range(0, 2):

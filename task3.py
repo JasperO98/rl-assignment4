@@ -1,4 +1,4 @@
-from hex_skeleton import HexBoard
+from game import HexBoard
 
 if __name__ == '__main__':
     colour = HexBoard.RED
