@@ -7,6 +7,7 @@ if __name__ == '__main__':
 
     while not board.game_over:
         board.print()
+        board.render()
 
         row = int(input('Row: '))
         column = ord(input('Column: ')) - ord('a')
@@ -19,6 +20,8 @@ if __name__ == '__main__':
         colour = board.get_opposite_color(colour)
 
     board.print()
+    board.render()
+
     if board.check_win(HexBoard.RED):
         print('Red Won')
     if board.check_win(HexBoard.BLUE):
