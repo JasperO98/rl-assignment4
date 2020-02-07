@@ -117,7 +117,7 @@ class HexBoard:
     def render(self):
         # calculate all relevant lengths
         hex_long = int(round(
-            500 / (self.size * 3 - 1)
+            2000 / (self.size * 3 - 1)
         ))
         hex_short = int(round(
             hex_long * sin(radians(30)) / sin(radians(60))
@@ -127,7 +127,7 @@ class HexBoard:
         ))
 
         # create canvas
-        canvas = np.ones((hex_diag * self.size + hex_short * (self.size + 1), hex_long * (self.size * 3 - 1), 3), np.uint8) * 255
+        canvas = np.zeros((hex_diag * self.size + hex_short * (self.size + 1), hex_long * (self.size * 3 - 1), 3), np.uint8)
 
         # render hexes
         for i in range(self.size):
@@ -151,15 +151,19 @@ class HexBoard:
                 ))
 
                 cv.fillPoly(canvas, [points], color)
-                cv.polylines(canvas, [points], True, (0, 0, 0), 4)
+                cv.polylines(canvas, [points], True, (0, 0, 0), 12)
                 cv.putText(
                     canvas,
                     str(i) + chr(ord('a') + j),
                     (w + int(hex_long / 1.75), h + hex_short + int(hex_diag / 1.5)),
                     cv.FONT_HERSHEY_SIMPLEX,
-                    1,
+                    4,
                     (0, 0, 0),
+                    4,
                 )
+
+        # apply anti aliasing
+        canvas = cv.resize(src=canvas, dsize=None, fx=0.25, fy=0.25, interpolation=cv.INTER_AREA)
 
         # show canvas
         cv.imshow('HEX', canvas)
