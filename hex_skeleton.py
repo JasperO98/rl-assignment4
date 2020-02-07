@@ -25,6 +25,12 @@ class HexBoard:
             return HexBoard.EMPTY
         return self.board[coordinates]
 
+    def exists(self, coordinates):
+        for i in (0, 1):
+            if coordinates[i] < 0 or coordinates[i] > self.size - 1:
+                return False
+        return True
+
     def place(self, coordinates, color):
         if not self.game_over and self.board[coordinates] == HexBoard.EMPTY:
             self.board[coordinates] = color
