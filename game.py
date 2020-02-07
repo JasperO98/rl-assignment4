@@ -152,6 +152,14 @@ class HexBoard:
 
                 cv.fillPoly(canvas, [points], color)
                 cv.polylines(canvas, [points], True, (0, 0, 0), 4)
+                cv.putText(
+                    canvas,
+                    str(i) + chr(ord('a') + j),
+                    (w + int(hex_long / 1.75), h + hex_short + int(hex_diag / 1.5)),
+                    cv.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    (0, 0, 0),
+                )
 
         # show canvas
         cv.imshow('HEX', canvas)
