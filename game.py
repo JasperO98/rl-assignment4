@@ -95,7 +95,7 @@ class HexBoard:
         for y in range(self.size):
             print(chr(y + ord('a')), "", end="")
         print("")
-        print(" -----------------------")
+        print("-----------------------")
         for y in range(self.size):
             print(y, "|", end="")
             for z in range(y):
@@ -112,7 +112,7 @@ class HexBoard:
                     else:
                         print("- ", end="")
             print("|")
-        print("   -----------------------")
+        print("-----------------------")
 
     def render(self):
         # calculate all relevant lengths
