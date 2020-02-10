@@ -172,6 +172,29 @@ class HexBoard:
                     4,
                 )
 
+        # render borders
+        points = [(6, hex_short + 6)]
+        for i in range(self.size):
+            points.append((i * hex_long * 2 + 6 + hex_long, 6))
+            points.append(((i + 1) * hex_long * 2 + 6, hex_short + 6))
+        points = np.array(points)
+
+        cv.polylines(canvas, [points], False, (0, 0, 255), 12)
+        points[:, 0] = canvas.shape[1] - points[:, 0]
+        points[:, 1] = canvas.shape[0] - points[:, 1]
+        cv.polylines(canvas, [points], False, (0, 0, 255), 12)
+
+        points = []
+        for i in range(self.size):
+            points.append((6 + i * hex_long, 6 + hex_short + (hex_short + hex_diag) * i))
+            points.append((6 + i * hex_long, 6 + hex_short + hex_diag + (hex_short + hex_diag) * i))
+        points = np.array(points)
+
+        cv.polylines(canvas, [points], False, (255, 0, 0), 12)
+        points[:, 0] = canvas.shape[1] - points[:, 0]
+        points[:, 1] = canvas.shape[0] - points[:, 1]
+        cv.polylines(canvas, [points], False, (255, 0, 0), 12)
+
         # apply anti aliasing
         canvas = cv.resize(src=canvas, dsize=None, fx=0.25, fy=0.25, interpolation=cv.INTER_AREA)
 
