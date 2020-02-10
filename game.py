@@ -127,13 +127,14 @@ class HexBoard:
         ))
 
         # create canvas
-        canvas = np.zeros((hex_diag * self.size + hex_short * (self.size + 1), hex_long * (self.size * 3 - 1), 3), np.uint8)
+        canvas = cv.imread('background.jpg')
+        canvas = cv.resize(canvas, (hex_long * (self.size * 3 - 1) + 12, hex_diag * self.size + hex_short * (self.size + 1) + 12))
 
         # render hexes
         for i in range(self.size):
             for j in range(self.size):
-                h = i * (hex_diag + hex_short)
-                w = i * hex_long + j * hex_long * 2
+                h = i * (hex_diag + hex_short) + 6
+                w = i * hex_long + j * hex_long * 2 + 6
 
                 color = (255, 255, 255)
                 if self.is_color((j, i), HexBoard.RED):
