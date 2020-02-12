@@ -1,3 +1,8 @@
+import cv2 as cv
+import numpy as np
+from math import sin, radians
+
+
 class HexBoard:
     BLUE = 1
     RED = 2
@@ -90,7 +95,7 @@ class HexBoard:
         for y in range(self.size):
             print(chr(y + ord('a')), "", end="")
         print("")
-        print(" -----------------------")
+        print("-----------------------")
         for y in range(self.size):
             print(y, "|", end="")
             for z in range(y):
@@ -107,4 +112,92 @@ class HexBoard:
                     else:
                         print("- ", end="")
             print("|")
-        print("   -----------------------")
+        print("-----------------------")
+
+    def render(self):
+        # calculate all relevant lengths
+        hex_long = int(round(
+            2000 / (self.size * 3 - 1)
+        ))
+        hex_short = int(round(
+            hex_long * sin(radians(30)) / sin(radians(60))
+        ))
+        hex_diag = int(round(
+            hex_long * sin(radians(90)) / sin(radians(60))
+        ))
+
+        # create canvas
+        canvas = cv.imread('background.jpg')
+        canvas = cv.resize(canvas, (hex_long * (self.size * 3 - 1) + 12, hex_diag * self.size + hex_short * (self.size + 1) + 12))
+
+        # render hexes
+        for i in range(self.size):
+            for j in range(self.size):
+                h = i * (hex_diag + hex_short) + 6
+                w = i * hex_long + j * hex_long * 2 + 6
+
+                color = (255, 255, 255)
+                if self.is_color((j, i), HexBoard.RED):
+                    color = (0, 0, 255)
+                if self.is_color((j, i), HexBoard.BLUE):
+                    color = (255, 0, 0)
+
+                points = np.array((
+                    (w, h + hex_short),
+                    (w + hex_long, h),
+                    (w + hex_long * 2, h + hex_short),
+                    (w + hex_long * 2, h + hex_short + hex_diag),
+                    (w + hex_long, h + hex_diag + hex_short * 2),
+                    (w, h + hex_short + hex_diag),
+                ))
+
+                cv.fillPoly(canvas, [points], color)
+                cv.polylines(canvas, [points], True, (0, 0, 0), 12)
+                cv.putText(
+                    canvas,
+                    str(i) + chr(ord('a') + j),
+                    (w + int(hex_long / 1.75), h + hex_short + int(hex_diag / 1.5)),
+                    cv.FONT_HERSHEY_SIMPLEX,
+                    16 / self.size,
+                    (0, 0, 0),
+                    16,
+                )
+                cv.putText(
+                    canvas,
+                    str(i) + chr(ord('a') + j),
+                    (w + int(hex_long / 1.75), h + hex_short + int(hex_diag / 1.5)),
+                    cv.FONT_HERSHEY_SIMPLEX,
+                    16 / self.size,
+                    (255, 255, 255),
+                    4,
+                )
+
+        # render borders
+        points = [(6, hex_short + 6)]
+        for i in range(self.size):
+            points.append((i * hex_long * 2 + 6 + hex_long, 6))
+            points.append(((i + 1) * hex_long * 2 + 6, hex_short + 6))
+        points = np.array(points)
+
+        cv.polylines(canvas, [points], False, (0, 0, 255), 12)
+        points[:, 0] = canvas.shape[1] - points[:, 0]
+        points[:, 1] = canvas.shape[0] - points[:, 1]
+        cv.polylines(canvas, [points], False, (0, 0, 255), 12)
+
+        points = []
+        for i in range(self.size):
+            points.append((6 + i * hex_long, 6 + hex_short + (hex_short + hex_diag) * i))
+            points.append((6 + i * hex_long, 6 + hex_short + hex_diag + (hex_short + hex_diag) * i))
+        points = np.array(points)
+
+        cv.polylines(canvas, [points], False, (255, 0, 0), 12)
+        points[:, 0] = canvas.shape[1] - points[:, 0]
+        points[:, 1] = canvas.shape[0] - points[:, 1]
+        cv.polylines(canvas, [points], False, (255, 0, 0), 12)
+
+        # apply anti aliasing
+        canvas = cv.resize(src=canvas, dsize=None, fx=0.25, fy=0.25, interpolation=cv.INTER_AREA)
+
+        # show canvas
+        cv.imshow('HEX', canvas)
+        cv.waitKey(1000)

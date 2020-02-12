@@ -6,6 +6,7 @@ if __name__ == '__main__':
     board = HexBoard(4)
     print('Red Starts')
     board.print()
+    board.render()
 
     while not board.game_over:
         match = re.match(r'^([0-9]+)([a-z])$', input('Coordinates: ').lower())
@@ -24,6 +25,7 @@ if __name__ == '__main__':
         board.place((column, row), colour)
         colour = board.get_opposite_color(colour)
         board.print()
+        board.render()
 
     if board.check_win(HexBoard.RED):
         print('Red Won')
