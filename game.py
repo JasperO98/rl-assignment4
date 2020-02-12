@@ -12,13 +12,9 @@ class HexBoard:
     def __init__(self, board_size):
         self.board = {}
         self.size = board_size
-        self.game_over = False
         for x in range(board_size):
             for y in range(board_size):
                 self.board[x, y] = HexBoard.EMPTY
-
-    def is_game_over(self):
-        return self.game_over
 
     def is_empty(self, coordinates):
         return self.board[coordinates] == HexBoard.EMPTY
@@ -102,25 +98,31 @@ class HexBoard:
         # n % 2 = 1 -> min
         # self.render()
 
-        if n == 3:
+        if n == 3 or self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE):
             return self.eval()
 
         g = -np.inf if n % 2 else np.inf
+        best_move, best_g = None, g
+
         for move in self.possible_moves():
             self.place(move, HexBoard.BLUE if n % 2 else HexBoard.RED)
             g = (max if n % 2 else min)(g, self.alphabeta(n + 1, a, b))
             self.place(move, HexBoard.EMPTY)
             if n % 2:
                 a = max(a, g)
+                if g > best_g:
+                    best_move, best_g = move, g
                 if g >= b:
                     break
             else:
                 b = min(b, g)
+                if g < best_g:
+                    best_move, best_g = move, g
                 if a >= g:
                     break
 
         if n == 0:
-            return move
+            return best_move
         else:
             return g
 
