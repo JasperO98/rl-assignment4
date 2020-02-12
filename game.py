@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 from math import sin, radians
+from random import random
 
 
 class HexBoard:
@@ -37,10 +38,7 @@ class HexBoard:
         return True
 
     def place(self, coordinates, color):
-        if not self.game_over and self.board[coordinates] == HexBoard.EMPTY:
-            self.board[coordinates] = color
-            if self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE):
-                self.game_over = True
+        self.board[coordinates] = color
 
     @staticmethod
     def get_opposite_color(current_color):
@@ -95,6 +93,36 @@ class HexBoard:
             for j in range(self.size):
                 if self.is_empty((i, j)):
                     yield i, j
+
+    def eval(self):
+        return random()
+
+    def alphabeta(self, n, a, b):
+        # n % 2 = 0 -> max
+        # n % 2 = 1 -> min
+        # self.render()
+
+        if n == 3:
+            return self.eval()
+
+        g = -np.inf if n % 2 else np.inf
+        for move in self.possible_moves():
+            self.place(move, HexBoard.BLUE if n % 2 else HexBoard.RED)
+            g = (max if n % 2 else min)(g, self.alphabeta(n + 1, a, b))
+            self.place(move, HexBoard.EMPTY)
+            if n % 2:
+                a = max(a, g)
+                if g >= b:
+                    break
+            else:
+                b = min(b, g)
+                if a >= g:
+                    break
+
+        if n == 0:
+            return move
+        else:
+            return g
 
     def print(self):
         print("   ", end="")
