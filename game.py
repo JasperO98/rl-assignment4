@@ -93,35 +93,31 @@ class HexBoard:
     def eval(self):
         return random()
 
-    def alphabeta(self, n, a, b):
-        # n % 2 = 0 -> max
-        # n % 2 = 1 -> min
-        # self.render()
-
-        if n == 3 or self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE):
+    def alphabeta(self, depth, lower, upper):
+        if depth == 3 or self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE):
             return self.eval()
 
-        g = np.inf if n % 2 else -np.inf
+        g = np.inf if depth % 2 else -np.inf
         best_move, best_g = None, g
 
         for move in self.possible_moves():
-            self.place(move, HexBoard.BLUE if n % 2 else HexBoard.RED)
-            g = (min if n % 2 else max)(g, self.alphabeta(n + 1, a, b))
+            self.place(move, HexBoard.BLUE if depth % 2 else HexBoard.RED)
+            g = (min if depth % 2 else max)(g, self.alphabeta(depth + 1, lower, upper))
             self.place(move, HexBoard.EMPTY)
-            if n % 2:
-                b = min(b, g)
+            if depth % 2:
+                upper = min(upper, g)
                 if g < best_g:
                     best_move, best_g = move, g
-                if a >= g:
+                if lower >= g:
                     break
             else:
-                a = max(a, g)
+                lower = max(lower, g)
                 if g > best_g:
                     best_move, best_g = move, g
-                if g >= b:
+                if g >= upper:
                     break
 
-        if n == 0:
+        if depth == 0:
             return best_move
         else:
             return g
