@@ -94,7 +94,11 @@ class HexBoard:
         return random()
 
     def alphabeta(self, depth, lower, upper):
-        if depth == 3 or self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE):
+        if self.check_win(HexBoard.RED):
+            return np.inf
+        if self.check_win(HexBoard.BLUE):
+            return -np.inf
+        if depth == 3:
             return self.eval()
 
         g = np.inf if depth % 2 else -np.inf
