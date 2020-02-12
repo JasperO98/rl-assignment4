@@ -134,7 +134,10 @@ class HexBoard:
 
         # create canvas
         canvas = cv.imread('background.jpg')
-        canvas = cv.resize(canvas, (hex_long * (self.size * 3 - 1) + 12, hex_diag * self.size + hex_short * (self.size + 1) + 12))
+        canvas = cv.resize(canvas, (
+            hex_long * (self.size * 3 - 1) + 12,
+            hex_diag * self.size + hex_short * (self.size + 1) + 12,
+        ))
 
         # render hexes
         for i in range(self.size):
