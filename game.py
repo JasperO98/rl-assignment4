@@ -101,24 +101,24 @@ class HexBoard:
         if n == 3 or self.check_win(HexBoard.RED) or self.check_win(HexBoard.BLUE):
             return self.eval()
 
-        g = -np.inf if n % 2 else np.inf
+        g = np.inf if n % 2 else -np.inf
         best_move, best_g = None, g
 
         for move in self.possible_moves():
             self.place(move, HexBoard.BLUE if n % 2 else HexBoard.RED)
-            g = (max if n % 2 else min)(g, self.alphabeta(n + 1, a, b))
+            g = (min if n % 2 else max)(g, self.alphabeta(n + 1, a, b))
             self.place(move, HexBoard.EMPTY)
             if n % 2:
-                a = max(a, g)
-                if g > best_g:
-                    best_move, best_g = move, g
-                if g >= b:
-                    break
-            else:
                 b = min(b, g)
                 if g < best_g:
                     best_move, best_g = move, g
                 if a >= g:
+                    break
+            else:
+                a = max(a, g)
+                if g > best_g:
+                    best_move, best_g = move, g
+                if g >= b:
                     break
 
         if n == 0:
