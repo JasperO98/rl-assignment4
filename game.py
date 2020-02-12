@@ -90,6 +90,12 @@ class HexBoard:
                 return True
         return False
 
+    def possible_moves(self):
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.is_empty((i, j)):
+                    yield i, j
+
     def print(self):
         print("   ", end="")
         for y in range(self.size):
