@@ -90,8 +90,88 @@ class HexBoard:
                 if self.is_empty((i, j)):
                     yield i, j
 
+    def get_snake(self, color):
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.is_color((i, j), color):
+                    yield i, j
+
     def eval(self):
         return random()
+
+    def distance(self, coords, color):
+        """
+        :param coords: Coordinates of the hex to travel too.
+        :param color:  The color of the player
+        :return: A distance (int)
+
+        If color == Red than we would like to go from top to bottom.
+        So going below should be rewarded, so the distance is 'short'
+
+        If the given coord is empty return the distance as the negative value of x or y coordinate (depends on color).
+        If the color is already your own color than the distance = 0
+        If the color is of the opponent the distance is very high = np.inf
+        """
+        # Direction Blue left to right (y), red top to bottom (x)
+        direction = 1 if color == HexBoard.RED else 0
+        if self.is_empty(coords):
+            return -coords[direction]
+            # Old: return self.size - 1 - coords[direction]
+        elif self.is_color(coords, color):
+            return 0
+        else:
+            return np.inf
+
+    def walk_path(self, color):
+        """
+        :param color: The color of the player
+        :return: the shortest path as a list of coordinates
+
+        This function simulates the dijkstra algorithm.
+        At each hex looks at each neigbour and it travels to the neighbor which is the closest.
+
+        """
+        paths = []
+        score = []
+        start = [(x, 0) for x in range(self.size)] if color == HexBoard.RED else [(0, y) for y in range(self.size)]
+        end = [(x, 2) for x in range(self.size)] if color == HexBoard.RED else [(2, y) for y in range(self.size)]
+        for coords in start:
+            placed = []
+            if self.is_empty(coords):
+                placed.append(coords)
+                self.place(coords, color)
+            # self.render()
+            current_path = []
+            current_score = []
+            current_score.append(self.distance(coords, color))
+            current_path.append(coords)
+            while current_path[-1] not in end and [n for n in self.get_neighbors(current_path[-1]) if
+                                                   self.is_empty(n)] != []:
+                # print(self.get_neighbors(current_path[-1]))
+                neighbor, s = self.best_neighbor(current_path[-1], color, current_path)
+                self.place(neighbor, color)
+                placed.append(neighbor)
+                # self.render()
+                current_score.append(s)
+                current_path.append(neighbor)
+            paths.append(current_path)
+            score.append(sum(current_score))
+            for step in placed:
+                self.place(step, HexBoard.EMPTY)
+            # self.render()
+        print(paths[score.index(min(score))])
+        return len(paths[score.index(min(score))])
+
+    def best_neighbor(self, hex, color, current_path):
+        neighbors = [n for n in self.get_neighbors(hex) if self.is_empty(n) and n not in current_path]
+        neighbors_dist = [self.distance(coords, color) for coords in neighbors]
+        min_dist = min(neighbors_dist)
+        return neighbors[neighbors_dist.index(min_dist)], min_dist
+
+    def dijkstra_eval(self):
+        red_short = self.walk_path(HexBoard.RED)
+        blue_short = self.walk_path(HexBoard.BLUE)
+        return blue_short - red_short
 
     def alphabeta(self, depth, lower, upper):
         if self.check_win(HexBoard.RED):
@@ -99,7 +179,9 @@ class HexBoard:
         if self.check_win(HexBoard.BLUE):
             return -np.inf
         if depth == 3:
-            return self.eval()
+            test = self.dijkstra_eval()
+            print(test)
+            return test
 
         g = np.inf if depth % 2 else -np.inf
         best_move, best_g = None, g
@@ -122,6 +204,7 @@ class HexBoard:
                     break
 
         if depth == 0:
+            print(best_move)
             return best_move
         else:
             return g
