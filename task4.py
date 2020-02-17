@@ -25,9 +25,9 @@ if __name__ == '__main__':
                 continue
         else:
             # column, row = board.alphabeta(0, -np.inf, np.inf)
-            tes = board.alphabeta(0, -np.inf, np.inf)
-            print(tes)
-            column, row = tes
+            test = board.alphabeta(0, -np.inf, np.inf)
+            print(test)
+            column, row = test
 
         board.place((column, row), colour)
         colour = board.get_opposite_color(colour)
