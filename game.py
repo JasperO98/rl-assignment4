@@ -1,13 +1,17 @@
-import cv2 as cv
-import numpy as np
 from math import sin, radians
 from random import random
+from time import time
+import cv2 as cv
+import numpy as np
 
 
 class HexBoard:
     BLUE = 1
     RED = 2
     EMPTY = 3
+
+    def board_hash(self):
+        return tuple(sorted(self.board.items()))
 
     def __init__(self, board_size):
         self.board = {}
@@ -93,22 +97,45 @@ class HexBoard:
     def eval(self):
         return random()
 
-    def alphabeta(self, depth, lower, upper):
-        if self.check_win(HexBoard.RED):
-            return np.inf
-        if self.check_win(HexBoard.BLUE):
-            return -np.inf
-        if depth == 3:
-            return self.eval()
+    def iterarive_deepening(self):
+        start = time()
+        depth = 1
+        tt_cur = {}
+        tt_prev = {}
+        while time() < start + 10:
+            print(depth)
+            move = self.alphabeta(0, -np.inf, np.inf, tt_cur, depth, tt_prev)
+            tt_prev = tt_cur
+            tt_cur = {}
+            depth += 1
+        return move
 
-        g = np.inf if depth % 2 else -np.inf
+    def alphabeta(self, depth_cur, lower, upper, tt_cur, depth_max, tt_prev):
+        g = np.inf if depth_cur % 2 else -np.inf
         best_move, best_g = None, g
 
+        if self.board_hash() in tt_cur:
+            return tt_cur[self.board_hash()]
+
+        if self.check_win(HexBoard.RED):
+            g = 999 - depth_cur
+        elif self.check_win(HexBoard.BLUE):
+            g = depth_cur - 999
+        elif depth_cur == depth_max:
+            g = self.eval()
+        if np.inf > g > -np.inf:
+            tt_cur[self.board_hash()] = g
+            return g
+
         for move in self.possible_moves():
-            self.place(move, HexBoard.BLUE if depth % 2 else HexBoard.RED)
-            g = (min if depth % 2 else max)(g, self.alphabeta(depth + 1, lower, upper))
+            self.place(move, HexBoard.BLUE if depth_cur % 2 else HexBoard.RED)
+            g = (
+                min if depth_cur % 2 else max
+            )(
+                g, self.alphabeta(depth_cur + 1, lower, upper, tt_cur, depth_max, tt_prev)
+            )
             self.place(move, HexBoard.EMPTY)
-            if depth % 2:
+            if depth_cur % 2:
                 upper = min(upper, g)
                 if g < best_g:
                     best_move, best_g = move, g
@@ -121,9 +148,11 @@ class HexBoard:
                 if g >= upper:
                     break
 
-        if depth == 0:
+        if depth_cur == 0:
+            print('Best G:', best_g)
             return best_move
         else:
+            tt_cur[self.board_hash()] = g
             return g
 
     def print(self):
