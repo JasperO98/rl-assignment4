@@ -4,7 +4,7 @@ import numpy as np
 
 if __name__ == '__main__':
     colour = HexBoard.RED
-    board = HexBoard(4)
+    board = HexBoard(3)
     print('Red Starts')
     board.print()
     board.render()
@@ -24,10 +24,7 @@ if __name__ == '__main__':
                 print('Invalid Move')
                 continue
         else:
-            # column, row = board.alphabeta(0, -np.inf, np.inf)
-            test = board.alphabeta(0, -np.inf, np.inf)
-            print(test)
-            column, row = test
+            column, row = board.alphabeta(0, -np.inf, np.inf)
 
         board.place((column, row), colour)
         colour = board.get_opposite_color(colour)

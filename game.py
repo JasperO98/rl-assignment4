@@ -153,7 +153,6 @@ class HexBoard:
             current_path.append(coords)
             while current_path[-1] not in end and [n for n in self.get_neighbors(current_path[-1]) if
                                                    self.is_empty(n)] != []:
-                # print(self.get_neighbors(current_path[-1]))
                 neighbor, s = self.best_neighbor(current_path[-1], color, current_path)
                 self.place(neighbor, color)
                 placed.append(neighbor)
@@ -161,16 +160,16 @@ class HexBoard:
                 current_score.append(s)
                 current_path.append(neighbor)
             paths.append(current_path)
-            # Paths with no ends in them are not good
+
             if current_path[-1] in end:
-                score.append(np.inf)
-            else:
                 score.append(sum(current_score))
+            else:
+                # Paths with no ends in them are not good
+                score.append(np.inf)
             for step in placed:
                 if step not in current_state:
                     self.place(step, HexBoard.EMPTY)
                     # self.render()
-        print(paths[score.index(min(score))])
         # Remove already filled coordinates
         return len([coords for coords in paths[score.index(min(score))] if coords not in current_state])
 
@@ -190,22 +189,17 @@ class HexBoard:
 
     def dijkstra_eval(self):
         current_state = [coords for coords, color in self.board.items() if color != HexBoard.EMPTY]
-        print(current_state)
         red_short = self.walk_path(HexBoard.RED, current_state)
         blue_short = self.walk_path(HexBoard.BLUE, current_state)
         return red_short - blue_short
 
     def alphabeta(self, depth, lower, upper):
         if self.check_win(HexBoard.RED):
-            print('true red')
             return 999 - depth
         if self.check_win(HexBoard.BLUE):
-            print('true blue')
             return -999 + depth
-        if depth == 3:
-            test = self.dijkstra_eval()
-            print('test:', test)
-            return test
+        if depth == 5:
+            return self.dijkstra_eval()
 
         g = np.inf if depth % 2 else -np.inf
         best_move, best_g = None, g
@@ -230,8 +224,6 @@ class HexBoard:
                     break
 
         if depth == 0:
-            print('best_g:', best_g)
-            print('best_move:', best_move)
             return best_move
         else:
             return g
