@@ -12,6 +12,28 @@ class HexBoard:
     RED = 2
     EMPTY = 3
 
+    def dijkstra(self, color):
+        nodes = {}
+        for i in range(self.size):
+            for j in range(self.size):
+                if not self.is_color((i, j), HexBoard.get_opposite_color(color)):
+                    if (color == HexBoard.RED and i == 0) or (color == HexBoard.BLUE and j == 0):
+                        nodes[i, j] = 0
+                    else:
+                        nodes[i, j] = np.inf
+
+        while True:
+            move, weight = min(nodes.items(), key=lambda item: item[1])
+
+            if (color == HexBoard.RED and move[0] == self.size - 1) \
+                    or (color == HexBoard.BLUE and move[1] == self.size - 1):
+                return weight
+
+            del nodes[move]
+            for neighbor in self.get_neighbors(move):
+                if neighbor in nodes:
+                    nodes[neighbor] = min(nodes[neighbor], weight + (0 if self.is_color(neighbor, color) else 1))
+
     def board_hash(self):
         return tuple(sorted(self.board.items()))
 
@@ -118,7 +140,7 @@ class HexBoard:
                     yield i, j
 
     def eval(self):
-        return random()
+        return self.dijkstra(HexBoard.RED) - self.dijkstra(HexBoard.BLUE)
 
     def iterarive_deepening(self):
         start = time()
