@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 from math import sin, radians
 from random import random
-
+from trueskill import Rating,  quality_1vs1, rate_1vs1, TrueSkill
 
 class HexBoard:
     BLUE = 1
@@ -10,11 +10,32 @@ class HexBoard:
     EMPTY = 3
 
     def __init__(self, board_size):
+        env = TrueSkill(mu=0, sigma=1)
+        self.random_3 = env.create_rating()
+        self.dijk_3 = env.create_rating()
+        self.dijk_4 = env.create_rating()
+        self.user = env.create_rating()
+
         self.board = {}
         self.size = board_size
         for x in range(board_size):
             for y in range(board_size):
                 self.board[x, y] = HexBoard.EMPTY
+
+    def update_rating(self, win_player1_name, los_player2_name):
+        player = {"dijk_3" : self.dijk_3, "user" : self.user, "dijk_4" : self.dijk_4, "random_3" : self.user}
+        player[win_player1_name], player[los_player2_name] = rate_1vs1(player[win_player1_name],
+                                                                       player[los_player2_name],
+                                                                       drawn=False)
+        for key, value in player.items():
+            setattr(self, key, value)
+        return player[win_player1_name], player[los_player2_name]
+
+    def get_leadboard(self):
+        return("Dijk 3\t:" + str(self.dijk_3.mu) + "\n" +
+               "Dijk 4\t:" + str(self.dijk_4.mu) + "\n" +
+               "Random 3\t:" + str(self.random_3.mu) + "\n" +
+               "User\t:" + str(self.user.mu) + "\n" )
 
     def is_empty(self, coordinates):
         return self.board[coordinates] == HexBoard.EMPTY
