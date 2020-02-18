@@ -24,7 +24,7 @@ if __name__ == '__main__':
                 print('Invalid Move')
                 continue
         else:
-            column, row = board.alphabeta(0, -np.inf, np.inf)
+            column, row = board.alphabeta(0, -np.inf, np.inf, {}, 3, {})
 
         board.place((column, row), colour)
         colour = board.get_opposite_color(colour)
