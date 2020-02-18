@@ -33,7 +33,11 @@ if __name__ == '__main__':
 
         if board.check_win(HexBoard.RED):
             print('Red Won')
+            print(board.update_rating("dijk_3", "user"))
+            print(board.get_leadboard())
             break
         if board.check_win(HexBoard.BLUE):
             print('Blue Won')
+            print(board.update_rating("user", "dijk_3"))
+            print(board.get_leadboard())
             break
