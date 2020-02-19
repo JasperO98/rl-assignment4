@@ -13,6 +13,9 @@ class HexBoard:
     def is_game_over(self):
         return False
 
+    def check_win(self, colour):
+        return False
+
     def do_move(self, coords):
         self.board[coords] = HexColour.BLUE if self.moves % 2 else HexColour.RED
         self.moves += 1

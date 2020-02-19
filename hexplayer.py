@@ -2,9 +2,11 @@ import re
 
 
 class HexPlayer:
-    def __init__(self):
+    def get_move(self, board):
         pass
 
+
+class HexPlayerHuman(HexPlayer):
     def get_move(self, board):
         while True:
 
