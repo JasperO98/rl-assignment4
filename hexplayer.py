@@ -1,7 +1,9 @@
 import re
+from abc import ABC, abstractmethod
 
 
-class HexPlayer:
+class HexPlayer(ABC):
+    @abstractmethod
     def get_move(self, board):
         pass
 
