@@ -10,11 +10,38 @@ class HexBoard:
         self.board = {}
         self.size = size
 
+    def dijkstra(self, colour):
+        nodes = {}
+        for i in range(self.size):
+            for j in range(self.size):
+                if not self.is_colour((i, j), not colour):
+                    if (colour == HexColour.RED and i == 0) or (colour == HexColour.BLUE and j == 0):
+                        nodes[i, j] = 0 if self.is_colour((i, j), colour) else 1
+                    else:
+                        nodes[i, j] = np.inf
+
+        while True:
+            move, weight = min(nodes.items(), key=lambda item: item[1])
+            del nodes[move]
+
+            if (colour == HexColour.RED and move[0] == self.size - 1) or (colour == HexColour.BLUE and move[1] == self.size - 1):
+                return weight
+
+            for neighbour in self.neighbourhood(move):
+                if neighbour in nodes:
+                    nodes[neighbour] = min(nodes[neighbour], weight + (0 if self.is_colour(neighbour, colour) else 1))
+
+    def neighbourhood(self, coords):
+        for diff in ((1, 0), (0, 1), (1, -1), (-1, 1), (0, -1), (-1, 0)):
+            neighbour = (coords[0] + diff[0], coords[1] + diff[1])
+            if self.exists(neighbour):
+                yield neighbour
+
     def is_game_over(self):
-        return False
+        return len(self.board) == self.size ** 2 or self.check_win(HexColour.RED) or self.check_win(HexColour.BLUE)
 
     def check_win(self, colour):
-        return False
+        return self.dijkstra(colour) == 0
 
     def do_move(self, coords):
         self.board[coords] = HexColour.BLUE if self.moves % 2 else HexColour.RED
