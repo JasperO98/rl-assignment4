@@ -21,8 +21,8 @@ class HexPlayerHuman(HexPlayer):
             row = int(match.groups()[0])
             column = ord(match.groups()[1]) - ord('a')
 
-            if not board.exists((column, row)) or not board.is_empty((column, row)):
+            if not board.exists((row, column)) or not board.is_empty((row, column)):
                 print('Invalid Move')
                 continue
 
-            return column, row
+            return row, column

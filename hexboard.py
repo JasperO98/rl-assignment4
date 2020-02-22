@@ -62,9 +62,9 @@ class HexBoard:
                 w = i * hex_long + j * hex_long * 2 + 6
 
                 color = (255, 255, 255)
-                if self.is_colour((j, i), HexColour.RED):
+                if self.is_colour((i, j), HexColour.RED):
                     color = (0, 0, 255)
-                if self.is_colour((j, i), HexColour.BLUE):
+                if self.is_colour((i, j), HexColour.BLUE):
                     color = (255, 0, 0)
 
                 points = np.array((
