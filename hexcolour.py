@@ -1,6 +1,6 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 class HexColour(Enum):
-    RED = auto()
-    BLUE = auto()
+    RED = True
+    BLUE = False
