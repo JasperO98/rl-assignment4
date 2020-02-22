@@ -1,11 +1,9 @@
-from math import sin, radians
-from random import random
 from time import time
+from math import sin, radians
 import cv2 as cv
 import numpy as np
-from math import sin, radians
-from random import random
-from trueskill import Rating,  quality_1vs1, rate_1vs1, TrueSkill
+from trueskill import rate_1vs1, TrueSkill
+
 
 class HexBoard:
     BLUE = 1
@@ -51,7 +49,7 @@ class HexBoard:
                 self.board[x, y] = HexBoard.EMPTY
 
     def update_rating(self, win_player1_name, los_player2_name):
-        player = {"dijk_3" : self.dijk_3, "user" : self.user, "dijk_4" : self.dijk_4, "random_3" : self.user}
+        player = {"dijk_3": self.dijk_3, "user": self.user, "dijk_4": self.dijk_4, "random_3": self.user}
         player[win_player1_name], player[los_player2_name] = rate_1vs1(player[win_player1_name],
                                                                        player[los_player2_name],
                                                                        drawn=False)
@@ -60,10 +58,10 @@ class HexBoard:
         return player[win_player1_name], player[los_player2_name]
 
     def get_leadboard(self):
-        return("Dijk 3\t:" + str(self.dijk_3.mu) + "\n" +
-               "Dijk 4\t:" + str(self.dijk_4.mu) + "\n" +
-               "Random 3\t:" + str(self.random_3.mu) + "\n" +
-               "User\t:" + str(self.user.mu) + "\n" )
+        return ("Dijk 3\t:" + str(self.dijk_3.mu) + "\n" +
+                "Dijk 4\t:" + str(self.dijk_4.mu) + "\n" +
+                "Random 3\t:" + str(self.random_3.mu) + "\n" +
+                "User\t:" + str(self.user.mu) + "\n")
 
     def is_empty(self, coordinates):
         return self.board[coordinates] == HexBoard.EMPTY
@@ -198,7 +196,7 @@ class HexBoard:
         paths = []
         score = []
         start = [(x, 0) for x in range(self.size)] if color == HexBoard.RED else [(0, y) for y in range(self.size)]
-        end = [(x, self.size-1) for x in range(self.size)] if color == HexBoard.RED else [(self.size-1, y) for y in range(self.size)]
+        end = [(x, self.size - 1) for x in range(self.size)] if color == HexBoard.RED else [(self.size - 1, y) for y in range(self.size)]
 
         # Filter out the impossible start positions
         start = [coords for coords in start if self.is_color(coords, color) or self.is_empty(coords)]
