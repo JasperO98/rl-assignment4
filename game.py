@@ -139,6 +139,12 @@ class HexBoard:
                 if self.is_empty((i, j)):
                     yield i, j
 
+    def get_snake(self, color):
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.is_color((i, j), color):
+                    yield i, j
+
     def eval(self):
         return self.dijkstra(HexBoard.RED) - self.dijkstra(HexBoard.BLUE)
 
@@ -154,6 +160,100 @@ class HexBoard:
             tt_cur = {}
             depth += 1
         return move
+
+    def weight(self, coords, color):
+        """
+        :param coords: Coordinates of the hex to travel too.
+        :param color:  The color of the player
+        :return: A weight (int)
+
+        If color == Red than we would like to go from top to bottom.
+        So going below should be rewarded, so the weight is 'small'
+
+        Weight is the negative value of x or y coordinate (depends on color).
+        If the color is already your own color than the weight = weight - 0.5
+
+        This give lower weight to hexes going down and even lower for hexes going down with the current color.
+        """
+        direction = 1 if color == HexBoard.RED else 0
+        weight = -coords[direction]
+        if self.is_color(coords, color):
+            weight -= 0.5
+        return weight
+
+    def walk_path(self, color, current_state):
+        """
+        :param color: The color of the player
+        :return: the length of the shortest path which is a list of coordinates
+
+        This function simulates the dijkstra algorithm.
+        At each hex looks at each neigbour and it travels to the neighbor which is the closest.
+
+        Function starts at the top hexes if color = Red and the most left hexes if color = Blue.
+        At each start hex it tries to find the shortest path to the Bottom (red) or Right (blue).
+
+        Of all paths take the shortest one and return the length of that path.
+
+        """
+        paths = []
+        score = []
+        start = [(x, 0) for x in range(self.size)] if color == HexBoard.RED else [(0, y) for y in range(self.size)]
+        end = [(x, self.size-1) for x in range(self.size)] if color == HexBoard.RED else [(self.size-1, y) for y in range(self.size)]
+
+        # Filter out the impossible start positions
+        start = [coords for coords in start if self.is_color(coords, color) or self.is_empty(coords)]
+
+        for coords in start:
+            placed = []
+            if self.is_empty(coords):
+                placed.append(coords)
+                self.place(coords, color)
+                # self.render()
+            current_path = []
+            current_score = []
+            current_score.append(self.weight(coords, color))
+            current_path.append(coords)
+            while current_path[-1] not in end and [n for n in self.get_neighbors(current_path[-1]) if
+                                                   self.is_empty(n)] != []:
+                neighbor, s = self.best_neighbor(current_path[-1], color, current_path)
+                self.place(neighbor, color)
+                placed.append(neighbor)
+                # self.render()
+                current_score.append(s)
+                current_path.append(neighbor)
+            paths.append(current_path)
+
+            if current_path[-1] in end:
+                score.append(sum(current_score))
+            else:
+                # Paths with no ends in them are not good
+                score.append(np.inf)
+            for step in placed:
+                if step not in current_state:
+                    self.place(step, HexBoard.EMPTY)
+                    # self.render()
+        # Remove already filled coordinates
+        return len([coords for coords in paths[score.index(min(score))] if coords not in current_state])
+
+    def best_neighbor(self, hex, color, current_path):
+        """
+        :param hex: Hex that searches neighbours
+        :param color: Color of hex
+        :param current_path: The current path that has been traversed
+        :return: Return the coordinates of the neighbour with the minimal weight which is not in the current_path
+
+        Finds the neighbour with the smallest weight.
+        """
+        neighbors = [n for n in self.get_neighbors(hex) if (self.is_empty(n) or self.is_color(n, color)) and n not in current_path]
+        neighbors_dist = [self.weight(coords, color) for coords in neighbors]
+        min_dist = min(neighbors_dist)
+        return neighbors[neighbors_dist.index(min_dist)], min_dist
+
+    def dijkstra_eval(self):
+        current_state = [coords for coords, color in self.board.items() if color != HexBoard.EMPTY]
+        red_short = self.walk_path(HexBoard.RED, current_state)
+        blue_short = self.walk_path(HexBoard.BLUE, current_state)
+        return red_short - blue_short
 
     def alphabeta(self, depth_cur, lower, upper, tt_cur, depth_max, tt_prev):
         g = np.inf if depth_cur % 2 else -np.inf
