@@ -8,13 +8,19 @@ class HexGame:
         self.player1 = player1
         self.player2 = player2
 
-    def play(self):
-        while not self.board.is_game_over():
+    def step(self, render=True):
+        if render:
             self.board.render(1000)
-            move = self.player1.get_move(self.board) if self.board.turn() else self.player2.get_move(self.board)
-            self.board.do_move(move)
 
-        self.board.render(1000)
+        move = self.player1.get_move(self.board) if self.board.turn() else self.player2.get_move(self.board)
+        self.board.do_move(move)
+
+    def play(self, render=True):
+        while not self.board.is_game_over():
+            self.step(render)
+
+        if render:
+            self.board.render(1000)
         if self.board.check_win(HexColour.RED):
             print('Red Wins!')
         if self.board.check_win(HexColour.BLUE):
