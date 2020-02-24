@@ -66,6 +66,12 @@ class HexBoard:
                 return False
         return True
 
+    def possible_moves(self):
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.is_empty((i, j)):
+                    yield i, j
+
     def render(self, timeout):
         # calculate all relevant lengths
         hex_long = int(round(

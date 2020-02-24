@@ -1,5 +1,7 @@
 import re
 from abc import ABC, abstractmethod
+import numpy as np
+from hexcolour import HexColour
 
 
 class HexPlayer(ABC):
@@ -32,3 +34,48 @@ class HexPlayerHuman(HexPlayer):
                 continue
 
             return row, column
+
+
+class HexPlayerAlphaBeta(HexPlayer):
+    def __init__(self):
+        super().__init__()
+        self.board = None
+
+    def get_move(self, board):
+        self.board = board
+        return self.alphabeta(True, 3, -np.inf, np.inf)
+
+    def alphabeta(self, top, depth, lower, upper):
+        # leaf node
+        if depth == 0 or self.board.is_game_over():
+            return self.board.dijkstra(self.colour) - self.board.dijkstra(self.colour.invert())
+
+        # track best move
+        best = None
+
+        # iterate over child nodes
+        for move in self.board.possible_moves():
+            pass
+
+            # get bound for child node
+            self.board.do_move(move)
+            bound = self.alphabeta(False, depth - 1, lower, upper)
+            self.board.undo_move(move)
+
+            # update global bounds
+            if self.board.turn() and bound > lower:
+                lower = bound
+                best = move
+            if not self.board.turn() and bound < upper:
+                upper = bound
+                best = move
+
+            # stop when bounds mismatch
+            if upper <= lower:
+                break
+
+        # return appropriate bound (or best move)
+        if top:
+            return best
+        else:
+            return lower if self.board.turn() else upper
