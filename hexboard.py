@@ -10,6 +10,9 @@ class HexBoard:
         self.board = {}
         self.size = size
 
+    def turn(self):
+        return self.moves % 2 == 1
+
     def dijkstra(self, colour):
         nodes = {}
         for i in range(self.size):
@@ -44,7 +47,7 @@ class HexBoard:
         return self.dijkstra(colour) == 0
 
     def do_move(self, coords):
-        self.board[coords] = HexColour.BLUE if self.moves % 2 else HexColour.RED
+        self.board[coords] = HexColour.RED if self.turn() else HexColour.BLUE
         self.moves += 1
 
     def undo_move(self, coords):
