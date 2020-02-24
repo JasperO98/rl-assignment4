@@ -11,7 +11,7 @@ class HexBoard:
         self.size = size
 
     def turn(self):
-        return self.moves % 2 == 1
+        return self.moves % 2 == 0
 
     def dijkstra(self, colour):
         nodes = {}
