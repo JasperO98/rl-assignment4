@@ -72,7 +72,7 @@ class HexBoard:
                 if self.is_empty((i, j)):
                     yield i, j
 
-    def render(self, timeout):
+    def render(self, timeout, mask=None):
         # calculate all relevant lengths
         hex_long = int(round(
             2000 / (self.size * 3 - 1)
@@ -112,11 +112,16 @@ class HexBoard:
                     (w, h + hex_short + hex_diag),
                 ))
 
+                if mask:
+                    text = str(mask[i, j]) if (i, j) in mask else ''
+                else:
+                    text = str(i) + chr(ord('a') + j)
+
                 cv.fillPoly(canvas, [points], color)
                 cv.polylines(canvas, [points], True, (0, 0, 0), 12)
                 cv.putText(
                     canvas,
-                    str(i) + chr(ord('a') + j),
+                    text,
                     (w + int(hex_long / 1.75), h + hex_short + int(hex_diag / 1.5)),
                     cv.FONT_HERSHEY_SIMPLEX,
                     16 / self.size,
@@ -125,7 +130,7 @@ class HexBoard:
                 )
                 cv.putText(
                     canvas,
-                    str(i) + chr(ord('a') + j),
+                    text,
                     (w + int(hex_long / 1.75), h + hex_short + int(hex_diag / 1.5)),
                     cv.FONT_HERSHEY_SIMPLEX,
                     16 / self.size,
