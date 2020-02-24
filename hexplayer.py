@@ -2,6 +2,7 @@ import re
 from abc import ABC, abstractmethod
 import numpy as np
 from hexcolour import HexColour
+from random import random
 
 
 class HexPlayer(ABC):
@@ -36,14 +37,18 @@ class HexPlayerHuman(HexPlayer):
             return row, column
 
 
-class HexPlayerAlphaBeta(HexPlayer):
-    def __init__(self):
+class HexPlayerRandom(HexPlayer):
+    def __init__(self, depth):
         super().__init__()
         self.board = None
+        self.depth = depth
+
+    def eval(self):
+        return random()
 
     def get_move(self, board):
         self.board = board
-        return self.alphabeta(True, 3, -np.inf, np.inf)
+        return self.alphabeta(True, self.depth, -np.inf, np.inf)
 
     def alphabeta(self, top, depth, lower, upper):
         # leaf node
@@ -79,3 +84,8 @@ class HexPlayerAlphaBeta(HexPlayer):
             return best
         else:
             return lower if self.board.turn() else upper
+
+
+class HexPlayerDijkstra(HexPlayerRandom):
+    def eval(self):
+        return self.board.dijkstra(self.colour.invert()) - self.board.dijkstra(self.colour)
