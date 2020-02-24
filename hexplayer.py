@@ -53,7 +53,7 @@ class HexPlayerRandom(HexPlayer):
     def alphabeta(self, top, depth, lower, upper):
         # leaf node
         if depth == 0 or self.board.is_game_over():
-            return self.board.dijkstra(self.colour.invert()) - self.board.dijkstra(self.colour)
+            return self.eval()
 
         # track best move
         best = None

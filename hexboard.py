@@ -27,7 +27,8 @@ class HexBoard:
             move, weight = min(nodes.items(), key=lambda item: item[1])
             del nodes[move]
 
-            if (colour == HexColour.RED and move[0] == self.size - 1) or (colour == HexColour.BLUE and move[1] == self.size - 1):
+            if (colour == HexColour.RED and move[0] == self.size - 1) or \
+                    (colour == HexColour.BLUE and move[1] == self.size - 1):
                 return weight
 
             for neighbour in self.neighbourhood(move):
