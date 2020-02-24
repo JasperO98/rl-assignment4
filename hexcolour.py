@@ -1,6 +1,12 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class HexColour(Enum):
-    RED = True
-    BLUE = False
+    RED = auto()
+    BLUE = auto()
+
+    def invert(self):
+        if self == HexColour.RED:
+            return HexColour.BLUE
+        else:
+            return HexColour.RED

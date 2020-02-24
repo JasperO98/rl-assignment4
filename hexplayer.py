@@ -3,6 +3,12 @@ from abc import ABC, abstractmethod
 
 
 class HexPlayer(ABC):
+    INSTANCE = HexColour.RED
+
+    def __init__(self):
+        self.colour = HexPlayer.INSTANCE
+        HexPlayer.INSTANCE = HexPlayer.INSTANCE.invert()
+
     @abstractmethod
     def get_move(self, board):
         pass
