@@ -50,6 +50,10 @@ class HexBoard:
         self.board[coords] = HexColour.RED if self.turn() else HexColour.BLUE
         self.moves += 1
 
+    def do_moves(self, coords):
+        for coord in coords:
+            self.do_move(coord)
+
     def undo_move(self, coords):
         del self.board[coords]
         self.moves -= 1
