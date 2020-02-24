@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from hexcolour import HexColour
 from random import random
+import igraph as ig
 
 
 class HexPlayer(ABC):
@@ -41,6 +42,7 @@ class HexPlayerRandom(HexPlayer):
     def __init__(self, depth):
         super().__init__()
         self.board = None
+        self.tree = None
         self.depth = depth
 
     def eval(self):
@@ -48,15 +50,17 @@ class HexPlayerRandom(HexPlayer):
 
     def get_move(self, board):
         self.board = board
+        self.tree = ig.Graph()
         return self.alphabeta(True, self.depth, -np.inf, np.inf)
 
     def alphabeta(self, top, depth, lower, upper):
         # leaf node
         if depth == 0 or self.board.is_game_over():
-            return self.eval()
+            return self.eval(), self.tree.add_vertex(label=self.eval())
 
-        # track best move
+        # track best move and child vertices
         best = None
+        vxcs = []
 
         # iterate over child nodes
         for move in self.board.possible_moves():
@@ -64,7 +68,8 @@ class HexPlayerRandom(HexPlayer):
 
             # get bound for child node
             self.board.do_move(move)
-            bound = self.alphabeta(False, depth - 1, lower, upper)
+            bound, vxc = self.alphabeta(False, depth - 1, lower, upper)
+            vxcs.append(vxc)
             self.board.undo_move(move)
 
             # update global bounds
@@ -79,11 +84,16 @@ class HexPlayerRandom(HexPlayer):
             if upper <= lower:
                 break
 
+        # update proof tree
+        vxp = self.tree.add_vertex(label='(' + str(lower) + ',' + str(upper) + ')')
+        self.tree.add_edges(((vxp, vxc) for vxc in vxcs))
+
         # return appropriate bound (or best move)
         if top:
+            ig.plot(obj=self.tree, layout=self.tree.layout_reingold_tilford())
             return best
         else:
-            return lower if self.board.turn() else upper
+            return (lower, vxp) if self.board.turn() else (upper, vxp)
 
 
 class HexPlayerDijkstra(HexPlayerRandom):
