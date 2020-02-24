@@ -48,7 +48,7 @@ class HexPlayerAlphaBeta(HexPlayer):
     def alphabeta(self, top, depth, lower, upper):
         # leaf node
         if depth == 0 or self.board.is_game_over():
-            return self.board.dijkstra(self.colour) - self.board.dijkstra(self.colour.invert())
+            return self.board.dijkstra(self.colour.invert()) - self.board.dijkstra(self.colour)
 
         # track best move
         best = None
