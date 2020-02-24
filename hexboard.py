@@ -31,6 +31,9 @@ class HexBoard:
                     (colour == HexColour.BLUE and move[1] == self.size - 1):
                 return weight
 
+            if len(nodes) == 0:
+                return np.inf
+
             for neighbour in self.neighbourhood(move):
                 if neighbour in nodes:
                     nodes[neighbour] = min(nodes[neighbour], weight + (0 if self.is_colour(neighbour, colour) else 1))
