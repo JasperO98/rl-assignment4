@@ -84,6 +84,10 @@ class HexPlayerRandom(HexPlayer):
             if upper <= lower:
                 break
 
+        # all children calculated
+        else:
+            lower = upper = (min if self.board.turn() else max)(lower, upper)
+
         # update proof tree
         vxp = self.tree.add_vertex(label='(' + str(lower) + ',' + str(upper) + ')')
         self.tree.add_edges(((vxp, vxc) for vxc in vxcs))
