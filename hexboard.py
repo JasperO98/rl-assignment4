@@ -6,12 +6,12 @@ from hexcolour import HexColour
 
 class HexBoard:
     def __init__(self, size):
-        self.moves = 0
+        self.moves = []
         self.board = {}
         self.size = size
 
     def turn(self):
-        return self.moves % 2 == 0
+        return len(self.moves) % 2 == 0
 
     def dijkstra(self, colour):
         nodes = {}
@@ -52,15 +52,14 @@ class HexBoard:
 
     def do_move(self, coords):
         self.board[coords] = HexColour.RED if self.turn() else HexColour.BLUE
-        self.moves += 1
+        self.moves.append(coords)
 
     def do_moves(self, coords):
         for coord in coords:
             self.do_move(coord)
 
-    def undo_move(self, coords):
-        del self.board[coords]
-        self.moves -= 1
+    def undo_move(self):
+        del self.board[self.moves.pop()]
 
     def is_empty(self, coords):
         return coords not in self.board

@@ -70,7 +70,7 @@ class HexPlayerRandom(HexPlayer):
             self.board.do_move(move)
             bound, vxc = self.alphabeta(False, depth - 1, lower, upper)
             vxcs.append(vxc)
-            self.board.undo_move(move)
+            self.board.undo_move()
 
             # update global bounds
             if self.board.turn() and bound > lower:
