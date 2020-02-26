@@ -14,12 +14,12 @@ class HexPlayer(ABC):
         HexPlayer.INSTANCE = HexPlayer.INSTANCE.invert()
 
     @abstractmethod
-    def get_move(self, board):
+    def get_move(self, board, renders):
         pass
 
 
 class HexPlayerHuman(HexPlayer):
-    def get_move(self, board):
+    def get_move(self, board, renders):
         while True:
 
             match = re.match(r'^([0-9]+)([a-z])$', input('Coordinates: ').lower())
@@ -46,12 +46,15 @@ class HexPlayerRandom(HexPlayer):
         self.depth = depth
 
     def eval(self):
-        return random()
+        return np.mean(list(self.board.board.keys()))
 
-    def get_move(self, board):
+    def get_move(self, board, renders):
         self.board = board
         self.tree = ig.Graph()
-        return self.alphabeta(True, self.depth, -np.inf, np.inf)
+        alphabeta = self.alphabeta(True, self.depth, -np.inf, np.inf)
+        if 'tree' in renders:
+            ig.plot(obj=self.tree, layout=self.tree.layout_reingold_tilford())
+        return alphabeta
 
     def alphabeta(self, top, depth, lower, upper):
         # leaf node
@@ -94,7 +97,6 @@ class HexPlayerRandom(HexPlayer):
 
         # return appropriate bound (or best move)
         if top:
-            ig.plot(obj=self.tree, layout=self.tree.layout_reingold_tilford())
             return best
         else:
             return (lower, vxp) if self.board.turn() else (upper, vxp)

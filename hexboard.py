@@ -13,7 +13,7 @@ class HexBoard:
     def turn(self):
         return len(self.moves) % 2 == 0
 
-    def dijkstra(self, colour):
+    def dijkstra(self, colour, render=False):
         nodes = {}
         for i in range(self.size):
             for j in range(self.size):
@@ -26,6 +26,9 @@ class HexBoard:
         while True:
             move, weight = min(nodes.items(), key=lambda item: item[1])
             del nodes[move]
+
+            if render:
+                self.render(0, {**nodes, move: str(weight) + 'P'})
 
             if (colour == HexColour.RED and move[0] == self.size - 1) or \
                     (colour == HexColour.BLUE and move[1] == self.size - 1):
