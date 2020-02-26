@@ -10,6 +10,9 @@ class HexBoard:
         self.board = {}
         self.size = size
 
+    def __hash__(self):
+        return hash(tuple(sorted(self.board.items())))
+
     def turn(self):
         return HexColour.BLUE if len(self.moves) % 2 else HexColour.RED
 
