@@ -3,6 +3,10 @@ from abc import ABC, abstractmethod
 import numpy as np
 from hexcolour import HexColour
 import igraph as ig
+from func_timeout import func_timeout, FunctionTimedOut
+from itertools import count
+from time import time
+from copy import deepcopy
 
 
 class HexPlayer(ABC):
@@ -100,3 +104,19 @@ class HexPlayerRandom(HexPlayer):
 class HexPlayerDijkstra(HexPlayerRandom):
     def eval(self):
         return self.board.dijkstra(self.colour.invert()) - self.board.dijkstra(self.colour)
+
+
+class HexPlayerEnhanced(HexPlayerDijkstra):
+    def get_move(self, board, renders):
+        self.board = deepcopy(board)
+        stop = time() + self.depth
+        alphabeta = None
+
+        for i in count(1):
+            self.tree = ig.Graph()
+            try:
+                alphabeta = func_timeout(stop - time(), self.alphabeta, (True, i, -np.inf, np.inf))
+            except FunctionTimedOut:
+                return alphabeta
+            if 'tree' in renders:
+                ig.plot(obj=self.tree, layout=self.tree.layout_reingold_tilford())
