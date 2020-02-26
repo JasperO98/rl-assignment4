@@ -62,7 +62,8 @@ class HexPlayerRandom(HexPlayer):
     def alphabeta(self, top, depth, lower, upper):
         # leaf node
         if depth == 0 or self.board.is_game_over():
-            return self.eval(), self.tree.add_vertex(label=self.eval())
+            value = self.eval()
+            return value, self.tree.add_vertex(label=value)
 
         # track best move and child vertices
         best = None
