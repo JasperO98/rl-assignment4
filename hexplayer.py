@@ -2,7 +2,6 @@ import re
 from abc import ABC, abstractmethod
 import numpy as np
 from hexcolour import HexColour
-from random import random
 import igraph as ig
 
 
@@ -86,10 +85,6 @@ class HexPlayerRandom(HexPlayer):
             # stop when bounds mismatch
             if upper <= lower:
                 break
-
-        # all children calculated
-        else:
-            lower = upper = (min if self.board.turn() else max)(lower, upper)
 
         # update proof tree
         vxp = self.tree.add_vertex(label='(' + str(lower) + ',' + str(upper) + ')')

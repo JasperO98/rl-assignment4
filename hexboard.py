@@ -24,6 +24,9 @@ class HexBoard:
                         nodes[i, j] = np.inf
 
         while True:
+            if len(nodes) == 0:
+                return np.inf
+
             move, weight = min(nodes.items(), key=lambda item: item[1])
             del nodes[move]
 
@@ -33,9 +36,6 @@ class HexBoard:
             if (colour == HexColour.RED and move[0] == self.size - 1) or \
                     (colour == HexColour.BLUE and move[1] == self.size - 1):
                 return weight
-
-            if len(nodes) == 0:
-                return np.inf
 
             for neighbour in self.neighbourhood(move):
                 if neighbour in nodes:
