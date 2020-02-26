@@ -11,7 +11,7 @@ class HexBoard:
         self.size = size
 
     def turn(self):
-        return len(self.moves) % 2 == 0
+        return HexColour.BLUE if len(self.moves) % 2 else HexColour.RED
 
     def dijkstra(self, colour, render=False):
         nodes = {}
@@ -54,7 +54,7 @@ class HexBoard:
         return self.dijkstra(colour) == 0
 
     def do_move(self, coords):
-        self.board[coords] = HexColour.RED if self.turn() else HexColour.BLUE
+        self.board[coords] = self.turn()
         self.moves.append(coords)
 
     def do_moves(self, coords):

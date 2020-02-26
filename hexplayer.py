@@ -75,10 +75,10 @@ class HexPlayerRandom(HexPlayer):
             self.board.undo_move()
 
             # update global bounds
-            if self.board.turn() and bound > lower:
+            if self.board.turn() == self.colour and bound > lower:
                 lower = bound
                 best = move
-            if not self.board.turn() and bound < upper:
+            if self.board.turn() == self.colour.invert() and bound < upper:
                 upper = bound
                 best = move
 
@@ -94,7 +94,7 @@ class HexPlayerRandom(HexPlayer):
         if top:
             return best
         else:
-            return (lower, vxp) if self.board.turn() else (upper, vxp)
+            return (lower, vxp) if self.board.turn() == self.colour else (upper, vxp)
 
 
 class HexPlayerDijkstra(HexPlayerRandom):
