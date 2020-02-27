@@ -62,15 +62,14 @@ class HexPlayerRandom(HexPlayer):
         # check transposition table for board state
         if self.use_tt:
             try:
-                vertex = self.tree.vs.find(hash=hash(board))
-                return vertex['value'], vertex
+                return self.tree.vs.find(hash=hash(board))
             except (ValueError, KeyError):
                 pass
 
         # leaf node
         if depth == 0 or board.is_game_over():
             value = self.eval(board)
-            return value, self.tree.add_vertex(
+            return self.tree.add_vertex(
                 label=value,
                 hash=hash(board),
                 value=value,
@@ -84,9 +83,9 @@ class HexPlayerRandom(HexPlayer):
         for child, move in board.children():
             pass
 
-            # get bound for child node
-            bound, vertex = self.alphabeta(False, depth - 1, lower, upper, child)
-            vertices.append(vertex)
+            # get data for child node
+            vertices.append(self.alphabeta(False, depth - 1, lower, upper, child))
+            bound = vertices[-1]['value']
 
             # update global bounds
             if board.turn() == self.colour and bound > lower:
@@ -112,7 +111,7 @@ class HexPlayerRandom(HexPlayer):
         if top:
             return best
         else:
-            return (lower, parent) if board.turn() == self.colour else (upper, parent)
+            return parent
 
 
 class HexPlayerDijkstra(HexPlayerRandom):
