@@ -46,6 +46,7 @@ class HexPlayerRandom(HexPlayer):
         super().__init__()
         self.tree = None
         self.depth = depth
+        self.use_tt = False
 
     def eval(self, board):
         return randint(-9, 9)
@@ -104,6 +105,10 @@ class HexPlayerDijkstra(HexPlayerRandom):
 
 
 class HexPlayerEnhanced(HexPlayerDijkstra):
+    def __init__(self, timeout, use_tt):
+        super().__init__(timeout)
+        self.use_tt = use_tt
+
     def get_move(self, board, renders):
         stop = time() + self.depth
         alphabeta = None
