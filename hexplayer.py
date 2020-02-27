@@ -59,22 +59,34 @@ class HexPlayerRandom(HexPlayer):
         return alphabeta
 
     def alphabeta(self, top, depth, lower, upper, board):
+        # check transposition table for board state
+        if self.use_tt:
+            try:
+                vertex = self.tree.vs.find(hash=hash(board))
+                return vertex['value'], vertex
+            except (ValueError, KeyError):
+                pass
+
         # leaf node
         if depth == 0 or board.is_game_over():
             value = self.eval(board)
-            return value, self.tree.add_vertex(label=value)
+            return value, self.tree.add_vertex(
+                label=value,
+                hash=hash(board),
+                value=value,
+            )
 
         # track best move and child vertices
         best = None
-        vxcs = []
+        vertices = []
 
         # iterate over child nodes
         for child, move in board.children():
             pass
 
             # get bound for child node
-            bound, vxc = self.alphabeta(False, depth - 1, lower, upper, child)
-            vxcs.append(vxc)
+            bound, vertex = self.alphabeta(False, depth - 1, lower, upper, child)
+            vertices.append(vertex)
 
             # update global bounds
             if board.turn() == self.colour and bound > lower:
@@ -89,14 +101,18 @@ class HexPlayerRandom(HexPlayer):
                 break
 
         # update proof tree
-        vxp = self.tree.add_vertex(label='(' + str(lower) + ',' + str(upper) + ')')
-        self.tree.add_edges(((vxp, vxc) for vxc in vxcs))
+        parent = self.tree.add_vertex(
+            label='(' + str(lower) + ',' + str(upper) + ')',
+            hash=hash(board),
+            value=lower if board.turn() == self.colour else upper,
+        )
+        self.tree.add_edges(((parent, vertex) for vertex in vertices))
 
         # return appropriate bound (or best move)
         if top:
             return best
         else:
-            return (lower, vxp) if board.turn() == self.colour else (upper, vxp)
+            return (lower, parent) if board.turn() == self.colour else (upper, parent)
 
 
 class HexPlayerDijkstra(HexPlayerRandom):
