@@ -30,7 +30,7 @@ class HexBoard:
             if len(nodes) == 0:
                 return self.size + 1
 
-            move, weight = min(nodes.items(), key=lambda item: item[1])
+            move, weight = min(reversed(nodes.items()), key=lambda item: item[1])
             del nodes[move]
 
             if render:
