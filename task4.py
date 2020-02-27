@@ -10,5 +10,5 @@ if __name__ == '__main__':
     board.dijkstra(HexColour.RED, True)
 
     # play a game
-    game = HexGame(4, HexPlayerDijkstra(4), HexPlayerHuman())
+    game = HexGame(5, HexPlayerDijkstra(4), HexPlayerHuman())
     game.play()

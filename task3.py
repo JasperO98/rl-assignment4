@@ -7,5 +7,5 @@ if __name__ == '__main__':
     game.step(['tree'])
 
     # play a game
-    game = HexGame(4, HexPlayerRandom(4), HexPlayerHuman())
+    game = HexGame(5, HexPlayerRandom(4), HexPlayerHuman())
     game.play()
