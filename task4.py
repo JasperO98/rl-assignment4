@@ -10,6 +10,10 @@ if __name__ == '__main__':
     board.dijkstra(HexColour.RED, True)
     board.dijkstra(HexColour.BLUE, True)
 
+    board = HexBoard(5)
+    board.set_colour([(0, 3), (2, 2), (4, 1)], HexColour.RED)
+    board.dijkstra(HexColour.RED, True)
+
     # play a game
     game = HexGame(5, HexPlayerDijkstra(4), HexPlayerHuman())
     game.play()
