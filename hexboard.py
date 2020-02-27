@@ -2,11 +2,11 @@ import cv2 as cv
 from math import sin, radians
 import numpy as np
 from hexcolour import HexColour
+from copy import deepcopy
 
 
 class HexBoard:
     def __init__(self, size):
-        self.moves = []
         self.board = {}
         self.size = size
 
@@ -14,7 +14,7 @@ class HexBoard:
         return hash(tuple(sorted(self.board.items())))
 
     def turn(self):
-        return HexColour.BLUE if len(self.moves) % 2 else HexColour.RED
+        return HexColour.BLUE if len(self.board) % 2 else HexColour.RED
 
     def dijkstra(self, colour, render=False):
         nodes = {}
@@ -59,14 +59,10 @@ class HexBoard:
     def do_move(self, coords):
         assert self.exists(coords) and self.is_empty(coords)
         self.board[coords] = self.turn()
-        self.moves.append(coords)
 
     def do_moves(self, coords):
         for coord in coords:
             self.do_move(coord)
-
-    def undo_move(self):
-        del self.board[self.moves.pop()]
 
     def is_empty(self, coords):
         return coords not in self.board
@@ -82,11 +78,13 @@ class HexBoard:
                 return False
         return True
 
-    def possible_moves(self):
+    def children(self):
         for i in range(self.size):
             for j in range(self.size):
                 if self.is_empty((i, j)):
-                    yield i, j
+                    child = deepcopy(self)
+                    child.do_move((i, j))
+                    yield child, (i, j)
 
     def render(self, timeout, mask=None):
         # calculate all relevant lengths
