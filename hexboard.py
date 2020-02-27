@@ -60,9 +60,9 @@ class HexBoard:
         assert self.exists(coords) and self.is_empty(coords)
         self.board[coords] = self.turn()
 
-    def do_moves(self, coords):
+    def set_colour(self, coords, colour):
         for coord in coords:
-            self.do_move(coord)
+            self.board[coord] = colour
 
     def is_empty(self, coords):
         return coords not in self.board

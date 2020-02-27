@@ -6,8 +6,9 @@ from hexcolour import HexColour
 if __name__ == '__main__':
     # test functionality
     board = HexBoard(3)
-    board.board[(1, 1)] = HexColour.RED
+    board.set_colour([(0, 1), (1, 1), (2, 1)], HexColour.RED)
     board.dijkstra(HexColour.RED, True)
+    board.dijkstra(HexColour.BLUE, True)
 
     # play a game
     game = HexGame(5, HexPlayerDijkstra(4), HexPlayerHuman())
