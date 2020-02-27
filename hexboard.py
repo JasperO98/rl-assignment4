@@ -57,6 +57,7 @@ class HexBoard:
         return self.dijkstra(colour) == 0
 
     def do_move(self, coords):
+        assert self.exists(coords) and self.is_empty(coords)
         self.board[coords] = self.turn()
         self.moves.append(coords)
 
@@ -74,6 +75,8 @@ class HexBoard:
         return not self.is_empty(coords) and self.board[coords] == colour
 
     def exists(self, coords):
+        if coords is None:
+            return False
         for coord in coords:
             if coord < 0 or coord > self.size - 1:
                 return False
