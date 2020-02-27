@@ -44,7 +44,8 @@ class HexPlayerHuman(HexPlayer):
 class HexPlayerRandom(HexPlayer):
     def __init__(self, depth):
         super().__init__()
-        self.tree = None
+        self.tree_cur = None
+        self.tree_prev = None
         self.depth = depth
         self.use_tt = False
 
@@ -52,24 +53,24 @@ class HexPlayerRandom(HexPlayer):
         return randint(-9, 9)
 
     def get_move(self, board, renders):
-        self.tree = ig.Graph()
+        self.tree_cur = ig.Graph(directed=True)
         alphabeta = self.alphabeta(True, self.depth, -np.inf, np.inf, board)
         if 'tree' in renders:
-            ig.plot(obj=self.tree, layout=self.tree.layout_reingold_tilford())
+            ig.plot(obj=self.tree_cur, layout=self.tree_cur.layout_reingold_tilford())
         return alphabeta
 
     def alphabeta(self, top, depth, lower, upper, board):
         # check transposition table for board state
         if self.use_tt:
             try:
-                return self.tree.vs.find(hash=hash(board))
+                return self.tree_cur.vs.find(hash=hash(board))
             except (ValueError, KeyError):
                 pass
 
         # leaf node
         if depth == 0 or board.is_game_over():
             value = self.eval(board)
-            return self.tree.add_vertex(
+            return self.tree_cur.add_vertex(
                 label=value,
                 hash=hash(board),
                 value=value,
@@ -100,12 +101,12 @@ class HexPlayerRandom(HexPlayer):
                 break
 
         # update proof tree
-        parent = self.tree.add_vertex(
+        parent = self.tree_cur.add_vertex(
             label='(' + str(lower) + ',' + str(upper) + ')',
             hash=hash(board),
             value=lower if board.turn() == self.colour else upper,
         )
-        self.tree.add_edges(((parent, vertex) for vertex in vertices))
+        self.tree_cur.add_edges(((parent, vertex) for vertex in vertices))
 
         # return appropriate bound (or best move)
         if top:
@@ -129,10 +130,11 @@ class HexPlayerEnhanced(HexPlayerDijkstra):
         alphabeta = None
 
         for i in count(1):
-            self.tree = ig.Graph()
+            self.tree_prev = self.tree_cur
+            self.tree_cur = ig.Graph(directed=True)
             try:
                 alphabeta = func_timeout(stop - time(), self.alphabeta, (True, i, -np.inf, np.inf, board))
             except FunctionTimedOut:
                 return alphabeta
             if 'tree' in renders:
-                ig.plot(obj=self.tree, layout=self.tree.layout_reingold_tilford())
+                ig.plot(obj=self.tree_cur, layout=self.tree_cur.layout_reingold_tilford())
