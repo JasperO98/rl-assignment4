@@ -49,7 +49,7 @@ class HexPlayerRandom(HexPlayer):
         self.depth = depth
 
     def eval(self):
-        return np.mean(list(self.board.board.keys()))
+        return randint(-9, 9)
 
     def get_move(self, board, renders):
         self.board = board
