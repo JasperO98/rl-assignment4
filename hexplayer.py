@@ -10,7 +10,7 @@ from random import randint
 
 
 class HexPlayer(ABC):
-    ENV = TrueSkill(mu=25, sigma=8.333)
+    ENV = TrueSkill(mu=25, sigma=8.333, draw_probability=0.00)
 
     def __init__(self):
         self.rating = HexPlayer.ENV.create_rating()
@@ -52,7 +52,7 @@ class HexPlayerRandom(HexPlayer):
         self.use_tt = False
 
     def __str__(self):
-        return 'Random Player, depth ' + str(self.depth)
+        return 'Random\n(depth ' + str(self.depth) + ")"
 
     def eval(self, board, colour):
         return randint(-9, 9)
@@ -155,7 +155,7 @@ class HexPlayerDijkstra(HexPlayerRandom):
         return board.dijkstra(colour.invert()) - board.dijkstra(colour)
 
     def __str__(self):
-        return 'Dijkstra Player, depth ' + str(self.depth)
+        return 'Dijkstra\n(depth ' + str(self.depth) + ")"
 
 
 class HexPlayerEnhanced(HexPlayerDijkstra):
@@ -165,7 +165,7 @@ class HexPlayerEnhanced(HexPlayerDijkstra):
         self.reached = 0
 
     def __str__(self):
-        return 'ID Player' + (' with Transposition Tables' if self.use_tt else '') + ', timeout ' + str(self.depth)
+        return 'ID' + ('TT' if self.use_tt else '') + '\n(timeout ' + str(self.depth) + ")"
 
     def get_move(self, board, colour, renders):
         stop = time() + self.depth
