@@ -162,6 +162,7 @@ class HexPlayerEnhanced(HexPlayerDijkstra):
     def __init__(self, timeout, use_tt):
         super().__init__(timeout)
         self.use_tt = use_tt
+        self.reached = 0
 
     def __str__(self):
         return 'ID Player' + (' with Transposition Tables' if self.use_tt else '') + ', timeout ' + str(self.depth)
@@ -178,3 +179,4 @@ class HexPlayerEnhanced(HexPlayerDijkstra):
             except FunctionTimedOut:
                 return alphabeta
             self.maybe_show_tree(renders)
+            self.reached = i
