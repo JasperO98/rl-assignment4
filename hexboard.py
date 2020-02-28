@@ -92,7 +92,7 @@ class HexBoard:
     def render(self, timeout, mask=None):
         # calculate all relevant lengths
         hex_long = int(round(
-            2000 / (self.size * 3 - 1)
+            2048 / (self.size * 3 - 1)
         ))
         hex_short = int(round(
             hex_long * sin(radians(30)) / sin(radians(60))

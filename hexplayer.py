@@ -59,7 +59,13 @@ class HexPlayerRandom(HexPlayer):
 
     def maybe_show_tree(self, renders):
         if 'tree' in renders:
-            ig.plot(obj=self.tree_cur, layout=self.tree_cur.layout_reingold_tilford(), margin=30)
+            ig.plot(
+                obj=self.tree_cur,
+                layout=self.tree_cur.layout_reingold_tilford(),
+                margin=30,
+                vertex_label_dist=-0.5,
+                bbox=(1024, 512),
+            )
 
     def get_move(self, board, colour, renders):
         self.tree_cur = ig.Graph(directed=True)
@@ -129,7 +135,10 @@ class HexPlayerRandom(HexPlayer):
             label='(' + str(lower) + ',' + str(upper) + ')',
             hash=hash(board),
             value=lower if board.turn() == colour else upper,
-            size=52,
+            width=55,
+            height=22,
+            shape='rectangle',
+
         )
         for vertex in vertices:
             self.tree_cur.add_edge(parent, vertex[0], label=vertex[1])
