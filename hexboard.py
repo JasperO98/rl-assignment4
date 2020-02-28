@@ -28,7 +28,7 @@ class HexBoard:
 
         while True:
             if len(nodes) == 0:
-                return self.size + 1
+                return (self.size ** 2) + 1
 
             move, weight = min(reversed(list(nodes.items())), key=lambda item: item[1])
             del nodes[move]
@@ -37,7 +37,7 @@ class HexBoard:
                 self.render(0, {**nodes, move: str(weight) + 'P'})
 
             if weight == np.inf:
-                return self.size + 1
+                return (self.size ** 2) + 1
 
             if (colour == HexColour.RED and move[0] == self.size - 1) or \
                     (colour == HexColour.BLUE and move[1] == self.size - 1):
