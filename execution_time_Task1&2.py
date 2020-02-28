@@ -1,18 +1,17 @@
-import matplotlib
-from hexgame import HexGame
-from hexplayer import HexPlayerHuman, HexPlayerRandom, HexPlayerDijkstra, HexPlayerEnhanced
-from hexcolour import HexColour
-import sys
 import os
+import sys
 import time
-import itertools
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns; sns.set()
+import seaborn as sns
+from hexgame import HexGame
+from hexplayer import HexPlayerRandom, HexPlayerDijkstra
+
+sns.set()
 
 
 def simulate_game(sizes, depths, iter, player1, player2):
-    combinations = [(s,d) for s in sizes for d in depths]
+    combinations = [(s, d) for s in sizes for d in depths]
     df = pd.DataFrame(columns=['Board size', 'Depth', 'Time'])
     for comb in combinations:
         print(comb)
@@ -23,7 +22,7 @@ def simulate_game(sizes, depths, iter, player1, player2):
             game = HexGame(s, player1(d), player2)
             start = time.time()
             game.step([])
-            df.loc[len(df)] = (s, d, time.time()-start)
+            df.loc[len(df)] = (s, d, time.time() - start)
         sys.stdout = sys.__stdout__
 
     return df
@@ -41,8 +40,8 @@ if __name__ == '__main__':
 
     iter = 10
 
-    depth = range(1, 5) # range(1, 5)
-    board_size = range(2, 6) # range(1, 6)
+    depth = range(1, 5)  # range(1, 5)
+    board_size = range(2, 6)  # range(1, 6)
 
     for i in range(len(players)):
         df = simulate_game(board_size, depth, iter, players[i], player2)

@@ -1,19 +1,15 @@
-import matplotlib
-from hexgame import HexGame
-from hexplayer import HexPlayerHuman, HexPlayerRandom, HexPlayerDijkstra, HexPlayerEnhanced
-from hexcolour import HexColour
-import sys
-import os
-import time
-import itertools
 import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns; sns.set()
 import numpy as np
+import pandas as pd
+import seaborn as sns
+from hexgame import HexGame
+from hexplayer import HexPlayerEnhanced
+
+sns.set()
 
 
 def simulate_game(sizes, timeout, TT_on, iter, player1, player2):
-    combinations = [(s,t) for s in sizes for t in timeout]
+    combinations = [(s, t) for s in sizes for t in timeout]
     df = pd.DataFrame(columns=['Board size', 'Timeout', 'Depth'])
     for comb in combinations:
         print(comb)

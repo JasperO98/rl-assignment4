@@ -1,10 +1,11 @@
-from hexplayer import HexPlayerDijkstra, HexPlayerRandom, HexPlayerEnhanced
-from hexgame import HexGame
-from trueskill import rate_1vs1
-import matplotlib.pyplot as plt
 from itertools import combinations
 from math import log, ceil
-from time import  time
+from time import time
+import matplotlib.pyplot as plt
+from trueskill import rate_1vs1
+from hexgame import HexGame
+from hexplayer import HexPlayerDijkstra, HexPlayerRandom, HexPlayerEnhanced
+
 
 def bar_plot(ratings, names, plot_title=""):
     y = ratings
@@ -17,6 +18,7 @@ def bar_plot(ratings, names, plot_title=""):
         plt.text(xlocs[i] - 0.25, v + 0.01, str(round(v, 2)))
     plt.xticks(xlocs, x)
     plt.savefig('ratings.pdf')
+
 
 def match(player1, player2, n_games, size):
     for _ in range(n_games):
@@ -47,6 +49,7 @@ def main():
     ratings = [player.rating.mu - 3 * player.rating.sigma for player in players]
     print("time in seconds\t\t:", time_taken)
     bar_plot(ratings, names)
+
 
 if __name__ == "__main__":
     main()
