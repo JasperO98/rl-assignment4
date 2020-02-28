@@ -53,7 +53,7 @@ class HexPlayerRandom(HexPlayer):
 
     def get_move(self, board, colour, renders):
         self.tree_cur = ig.Graph(directed=True)
-        alphabeta = self.alphabeta(True, self.depth, -np.inf, np.inf, board, 'R', colour)
+        alphabeta = self.alphabeta(True, self.depth, -np.inf, np.inf, board, colour)
         if 'tree' in renders:
             ig.plot(obj=self.tree_cur, layout=self.tree_cur.layout_reingold_tilford())
         return alphabeta
@@ -66,7 +66,7 @@ class HexPlayerRandom(HexPlayer):
                 pass
         return 0
 
-    def alphabeta(self, top, depth, lower, upper, board, label, colour):
+    def alphabeta(self, top, depth, lower, upper, board, colour):
         # check transposition table for board state
         if self.use_tt:
             try:
@@ -78,7 +78,7 @@ class HexPlayerRandom(HexPlayer):
         if depth == 0 or board.is_game_over():
             value = self.eval(board, colour)
             return self.tree_cur.add_vertex(
-                label=label + ' (' + str(value) + ')',
+                label=value,
                 hash=hash(board),
                 value=value,
             )
@@ -96,10 +96,11 @@ class HexPlayerRandom(HexPlayer):
             pass
 
             # get data for child node
-            vertices.append(
-                self.alphabeta(False, depth - 1, lower, upper, child, str(move[0]) + chr(move[1] + ord('a')), colour)
-            )
-            bound = vertices[-1]['value']
+            vertices.append((
+                self.alphabeta(False, depth - 1, lower, upper, child, colour),
+                str(move[0]) + chr(move[1] + ord('a')),
+            ))
+            bound = vertices[-1][0]['value']
 
             # update global bounds
             if board.turn() == colour and bound > lower:
@@ -115,11 +116,12 @@ class HexPlayerRandom(HexPlayer):
 
         # update proof tree
         parent = self.tree_cur.add_vertex(
-            label=label + ' (' + str(lower) + ',' + str(upper) + ')',
+            label='(' + str(lower) + ',' + str(upper) + ')',
             hash=hash(board),
             value=lower if board.turn() == colour else upper,
         )
-        self.tree_cur.add_edges(((parent, vertex) for vertex in vertices))
+        for vertex in vertices:
+            self.tree_cur.add_edge(parent, vertex[0], label=vertex[1])
 
         # return appropriate bound (or best move)
         if top:
@@ -146,7 +148,7 @@ class HexPlayerEnhanced(HexPlayerDijkstra):
             self.tree_prev = self.tree_cur
             self.tree_cur = ig.Graph(directed=True)
             try:
-                alphabeta = func_timeout(stop - time(), self.alphabeta, (True, i, -np.inf, np.inf, board, 'R', colour))
+                alphabeta = func_timeout(stop - time(), self.alphabeta, (True, i, -np.inf, np.inf, board, colour))
             except FunctionTimedOut:
                 return alphabeta
             if 'tree' in renders:
