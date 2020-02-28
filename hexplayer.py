@@ -166,7 +166,7 @@ class HexPlayerEnhanced(HexPlayerDijkstra):
     def __str__(self):
         return 'ID Player' + (' with Transposition Tables' if self.use_tt else '') + ', timeout ' + str(self.depth)
 
-    def get_move(self, board, renders, colour):
+    def get_move(self, board, colour, renders):
         stop = time() + self.depth
         alphabeta = None
 
