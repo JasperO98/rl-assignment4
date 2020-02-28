@@ -13,9 +13,9 @@ class HexGame:
             self.board.render(1000)
 
         if self.player1 and self.board.turn() == HexColour.RED:
-            move = self.player1.get_move(self.board, renders, HexColour.RED)
+            move = self.player1.get_move(self.board, HexColour.RED, renders)
         if self.player2 and self.board.turn() == HexColour.BLUE:
-            move = self.player2.get_move(self.board, renders, HexColour.BLUE)
+            move = self.player2.get_move(self.board, HexColour.BLUE, renders)
         self.board.do_move(move)
 
     def play(self, renders=('board', 'win')):
