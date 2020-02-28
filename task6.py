@@ -10,6 +10,8 @@ if __name__ == '__main__':
 
     game = HexGame(2, HexPlayerEnhanced(10, True), None)
     game.step(['tree'])
+    game = HexGame(2, HexPlayerEnhanced(10, False), None)
+    game.step(['tree'])
 
     # play a game
     game = HexGame(5, HexPlayerEnhanced(10, True), HexPlayerHuman())
