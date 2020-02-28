@@ -39,6 +39,9 @@ class HexPlayerHuman(HexPlayer):
 
             return row, column
 
+    def __str__(self):
+        return 'Human Player'
+
 
 class HexPlayerRandom(HexPlayer):
     def __init__(self, depth):
@@ -47,6 +50,9 @@ class HexPlayerRandom(HexPlayer):
         self.tree_prev = None
         self.depth = depth
         self.use_tt = False
+
+    def __str__(self):
+        return 'Random Player, depth ' + str(self.depth)
 
     def eval(self, board, colour):
         return randint(-9, 9)
@@ -139,11 +145,17 @@ class HexPlayerDijkstra(HexPlayerRandom):
     def eval(self, board, colour):
         return board.dijkstra(colour.invert()) - board.dijkstra(colour)
 
+    def __str__(self):
+        return 'Dijkstra Player, depth ' + str(self.depth)
+
 
 class HexPlayerEnhanced(HexPlayerDijkstra):
     def __init__(self, timeout, use_tt):
         super().__init__(timeout)
         self.use_tt = use_tt
+
+    def __str__(self):
+        return 'ID Player' + (' with Transposition Tables' if self.use_tt else '') + ', timeout ' + str(self.depth)
 
     def get_move(self, board, renders, colour):
         stop = time() + self.depth
