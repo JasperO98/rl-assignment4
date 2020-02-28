@@ -11,12 +11,13 @@ from random import randint
 
 class HexPlayer(ABC):
     ENV = TrueSkill(mu=25, sigma=8.333)
+
     def __init__(self):
-        self.rating = HexPlayer.ENV.create_rating() #VC
+        self.rating = HexPlayer.ENV.create_rating()
+
     @abstractmethod
     def get_move(self, board, colour, renders):
         pass
-
 
 
 class HexPlayerHuman(HexPlayer):
