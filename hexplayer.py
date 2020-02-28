@@ -51,11 +51,14 @@ class HexPlayerRandom(HexPlayer):
     def eval(self, board, colour):
         return randint(-9, 9)
 
+    def maybe_show_tree(self, renders):
+        if 'tree' in renders:
+            ig.plot(obj=self.tree_cur, layout=self.tree_cur.layout_reingold_tilford(), margin=30)
+
     def get_move(self, board, colour, renders):
         self.tree_cur = ig.Graph(directed=True)
         alphabeta = self.alphabeta(True, self.depth, -np.inf, np.inf, board, colour)
-        if 'tree' in renders:
-            ig.plot(obj=self.tree_cur, layout=self.tree_cur.layout_reingold_tilford())
+        self.maybe_show_tree(renders)
         return alphabeta
 
     def board_score_for_id(self, data):
@@ -153,5 +156,4 @@ class HexPlayerEnhanced(HexPlayerDijkstra):
                 alphabeta = func_timeout(stop - time(), self.alphabeta, (True, i, -np.inf, np.inf, board, colour))
             except FunctionTimedOut:
                 return alphabeta
-            if 'tree' in renders:
-                ig.plot(obj=self.tree_cur, layout=self.tree_cur.layout_reingold_tilford())
+            self.maybe_show_tree(renders)
