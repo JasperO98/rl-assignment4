@@ -1,6 +1,7 @@
 import re
 from abc import ABC, abstractmethod
 import numpy as np
+from trueskill import TrueSkill
 import igraph as ig
 from func_timeout import func_timeout, FunctionTimedOut
 from itertools import count
@@ -9,9 +10,13 @@ from random import randint
 
 
 class HexPlayer(ABC):
+    ENV = TrueSkill(mu=25, sigma=8.333)
+    def __init__(self):
+        self.rating = HexPlayer.ENV.create_rating() #VC
     @abstractmethod
     def get_move(self, board, colour, renders):
         pass
+
 
 
 class HexPlayerHuman(HexPlayer):
@@ -36,6 +41,7 @@ class HexPlayerHuman(HexPlayer):
 
 class HexPlayerRandom(HexPlayer):
     def __init__(self, depth):
+        super().__init__()
         self.tree_cur = None
         self.tree_prev = None
         self.depth = depth
