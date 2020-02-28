@@ -81,6 +81,7 @@ class HexPlayerRandom(HexPlayer):
                 label=value,
                 hash=hash(board),
                 value=value,
+                size=22,
             )
 
         # track best move and child vertices
@@ -119,6 +120,7 @@ class HexPlayerRandom(HexPlayer):
             label='(' + str(lower) + ',' + str(upper) + ')',
             hash=hash(board),
             value=lower if board.turn() == colour else upper,
+            size=52,
         )
         for vertex in vertices:
             self.tree_cur.add_edge(parent, vertex[0], label=vertex[1])
