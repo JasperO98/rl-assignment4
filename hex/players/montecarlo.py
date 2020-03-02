@@ -1,20 +1,21 @@
 from hex.players.base import HexPlayer
 import igraph as ig
 import numpy.random as npr
-from time import time
 import numpy as np
 from math import sqrt, log
 from ctypes import c_long, sizeof
+from tqdm import trange
 
 
 class HexPlayerMonteCarlo(HexPlayer):
-    def __init__(self, timeout):
+    def __init__(self, n, cp):
         super().__init__()
-        self.timeout = timeout
+        self.n = n
+        self.cp = cp
         self.tree = ig.Graph(directed=True)
 
     def __str__(self):
-        return 'MCTS\n(timeout ' + str(self.timeout) + ')'
+        return 'MCTS\n(N=' + str(self.n) + ', Cₚ=' + str(self.cp) + ')'
 
     def maybe_show_tree(self, renders):
         if 'tree' in renders:
@@ -32,7 +33,7 @@ class HexPlayerMonteCarlo(HexPlayer):
     def uct_for_board(self, parent, board):
         try:
             child = self.tree.vs.find(hash=hash(board))
-            return child['wins'] / child['visits'] + sqrt(log(parent['visits']) / child['visits'])
+            return child['wins'] / child['visits'] + sqrt(log(parent['visits']) / child['visits']) * self.cp
         except (ValueError, KeyError):
             return np.inf
 
@@ -47,8 +48,7 @@ class HexPlayerMonteCarlo(HexPlayer):
         except (ValueError, KeyError):
             self.tree.delete_vertices(self.tree.vs)
 
-        stop = time() + self.timeout
-        while time() < stop:
+        for _ in trange(self.n):
             self.walk(board, colour)
             self.maybe_show_tree(renders)
 
