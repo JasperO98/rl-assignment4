@@ -1,5 +1,5 @@
-from hexboard import HexBoard
-from hexcolour import HexColour
+from hex.board import HexBoard
+from hex.colour import HexColour
 
 
 class HexGame:

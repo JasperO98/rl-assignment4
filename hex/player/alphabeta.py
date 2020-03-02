@@ -1,46 +1,10 @@
-import re
-from abc import ABC, abstractmethod
 import numpy as np
-from trueskill import TrueSkill
 import igraph as ig
 from func_timeout import func_timeout, FunctionTimedOut
 from itertools import count
 from time import time
 from random import randint
-
-
-class HexPlayer(ABC):
-    ENV = TrueSkill(mu=25, sigma=8.333, draw_probability=0.00)
-
-    def __init__(self):
-        self.rating = HexPlayer.ENV.create_rating()
-
-    @abstractmethod
-    def get_move(self, board, colour, renders):
-        pass
-
-
-class HexPlayerHuman(HexPlayer):
-    def get_move(self, board, colour, renders):
-        while True:
-
-            match = re.match(r'^([0-9]+)([a-z])$', input('Coordinates: ').lower())
-
-            if not match:
-                print('Invalid Move')
-                continue
-
-            row = int(match.groups()[0])
-            column = ord(match.groups()[1]) - ord('a')
-
-            if not board.exists((row, column)) or not board.is_empty((row, column)):
-                print('Invalid Move')
-                continue
-
-            return row, column
-
-    def __str__(self):
-        return 'Human Player'
+from hex.player.base import HexPlayer
 
 
 class HexPlayerRandom(HexPlayer):

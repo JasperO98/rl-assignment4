@@ -1,7 +1,7 @@
 import cv2 as cv
 from math import sin, radians
 import numpy as np
-from hexcolour import HexColour
+from hex.colour import HexColour
 from copy import deepcopy
 
 
