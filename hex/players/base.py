@@ -17,25 +17,28 @@ class HexPlayer(ABC):
     def __str__(self):
         pass
 
+    @staticmethod
+    def string_to_move(string):
+        match = re.match(r'^([0-9]+)([a-z])$', string)
+        if not match:
+            return None
+        row = int(match.groups()[0])
+        column = ord(match.groups()[1]) - ord('a')
+        return row, column
+
+    @staticmethod
+    def move_to_string(move):
+        return str(move[0]) + chr(move[1] + ord('a'))
+
 
 class HexPlayerHuman(HexPlayer):
     def get_move(self, board, colour, renders):
         while True:
-
-            match = re.match(r'^([0-9]+)([a-z])$', input('Coordinates: ').lower())
-
-            if not match:
+            move = self.string_to_move(input('Coordinates: ').lower())
+            if not board.exists(move) or not board.is_empty(move):
                 print('Invalid Move')
                 continue
-
-            row = int(match.groups()[0])
-            column = ord(match.groups()[1]) - ord('a')
-
-            if not board.exists((row, column)) or not board.is_empty((row, column)):
-                print('Invalid Move')
-                continue
-
-            return row, column
+            return move
 
     def __str__(self):
         return 'Human Player'

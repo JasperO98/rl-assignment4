@@ -78,7 +78,7 @@ class HexPlayerRandom(HexPlayer):
             # get data for child node
             vertices.append((
                 self.alphabeta(False, depth - 1, lower, upper, child, colour),
-                str(move[0]) + chr(move[1] + ord('a')),
+                self.move_to_string(move),
             ))
             bound = vertices[-1][0]['value']
 

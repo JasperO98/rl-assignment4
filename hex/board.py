@@ -3,6 +3,7 @@ from math import sin, radians
 import numpy as np
 from hex.colour import HexColour
 from copy import deepcopy
+from hex.players.base import HexPlayer
 
 
 class HexBoard:
@@ -132,7 +133,7 @@ class HexBoard:
                 if mask:
                     text = str(mask[i, j]) if (i, j) in mask else ''
                 else:
-                    text = str(i) + chr(ord('a') + j)
+                    text = HexPlayer.move_to_string((i, j))
 
                 cv.fillPoly(canvas, [points], color)
                 cv.polylines(canvas, [points], True, (0, 0, 0), 12)
