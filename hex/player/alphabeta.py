@@ -16,7 +16,7 @@ class HexPlayerRandom(HexPlayer):
         self.use_tt = False
 
     def __str__(self):
-        return 'Random\n(depth ' + str(self.depth) + ")"
+        return 'Random\n(depth ' + str(self.depth) + ')'
 
     def eval(self, board, colour):
         return randint(-9, 9)
@@ -119,7 +119,7 @@ class HexPlayerDijkstra(HexPlayerRandom):
         return board.dijkstra(colour.invert()) - board.dijkstra(colour)
 
     def __str__(self):
-        return 'Dijkstra\n(depth ' + str(self.depth) + ")"
+        return 'Dijkstra\n(depth ' + str(self.depth) + ')'
 
 
 class HexPlayerEnhanced(HexPlayerDijkstra):
@@ -129,7 +129,7 @@ class HexPlayerEnhanced(HexPlayerDijkstra):
         self.reached = 0
 
     def __str__(self):
-        return 'ID' + ('TT' if self.use_tt else '') + '\n(timeout ' + str(self.depth) + ")"
+        return 'ID' + ('TT' if self.use_tt else '') + '\n(timeout ' + str(self.depth) + ')'
 
     def get_move(self, board, colour, renders):
         stop = time() + self.depth

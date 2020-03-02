@@ -4,13 +4,17 @@ from trueskill import TrueSkill
 
 
 class HexPlayer(ABC):
-    ENV = TrueSkill(mu=25, sigma=8.333, draw_probability=0.00)
+    ENV = TrueSkill(mu=25, sigma=8 + 1 / 3, draw_probability=0)
 
     def __init__(self):
         self.rating = HexPlayer.ENV.create_rating()
 
     @abstractmethod
     def get_move(self, board, colour, renders):
+        pass
+
+    @abstractmethod
+    def __str__(self):
         pass
 
 

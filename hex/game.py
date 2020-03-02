@@ -7,8 +7,8 @@ class HexGame:
         self.board = HexBoard(size)
         self.player1 = player1
         self.player2 = player2
-        self.win = ""
-        self.lose = ""
+        self.win = ''
+        self.lose = ''
 
     def step(self, renders=('board', 'win')):
         if 'board' in renders:
