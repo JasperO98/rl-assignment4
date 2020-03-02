@@ -22,6 +22,11 @@ class HexPlayerMonteCarlo(HexPlayer):
                 obj=self.tree,
                 layout=self.tree.layout_reingold_tilford(),
                 vertex_label_dist=-0.5,
+                margin=30,
+                bbox=(1024, 512),
+                vertex_width=55,
+                vertex_height=22,
+                vertex_shape='rectangle',
             )
 
     def uct_for_board(self, parent, board):
@@ -40,7 +45,7 @@ class HexPlayerMonteCarlo(HexPlayer):
                 mode=ig.OUT,
             )))
         except (ValueError, KeyError):
-            pass
+            self.tree.delete_vertices(self.tree.vs)
 
         stop = time() + self.timeout
         while time() < stop:
