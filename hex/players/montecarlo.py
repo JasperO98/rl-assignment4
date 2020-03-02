@@ -38,7 +38,7 @@ class HexPlayerMonteCarlo(HexPlayer):
             self.maybe_show_tree(renders)
 
         parent = self.tree.vs.find(hash=hash(board))
-        child = max(parent.successors(), key=lambda v: v['wins'] / v['visits'])
+        child = max(npr.permutation(parent.successors()), key=lambda v: v['wins'] / v['visits'])
         return self.string_to_move(self.tree.es[self.tree.get_eid(parent, child)]['label'])
 
     def walk(self, board, colour):
