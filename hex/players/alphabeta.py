@@ -4,7 +4,7 @@ from func_timeout import func_timeout, FunctionTimedOut
 from itertools import count
 from time import time
 from random import randint
-from hex.player.base import HexPlayer
+from hex.players.base import HexPlayer
 
 
 class HexPlayerRandom(HexPlayer):
