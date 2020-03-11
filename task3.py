@@ -6,6 +6,7 @@ from trueskill import rate_1vs1
 from hex.game import HexGame
 from hex.players.alphabeta import HexPlayerEnhanced
 from hex.players.montecarlo import HexPlayerMonteCarlo
+from hex.colour import HexColour
 
 
 def bar_plot(ratings, names, plot_title=''):
@@ -23,11 +24,10 @@ def bar_plot(ratings, names, plot_title=''):
 
 def match(player1, player2, n_games, size):
     for _ in range(n_games):
-        game = HexGame(size, player1, player2)
-        game.play([''])
-        if game.win[1] == 1:
+        winner = HexGame(size, player1, player2).play([])
+        if winner == HexColour.RED:
             player1.rating, player2.rating = rate_1vs1(player1.rating, player2.rating, drawn=False)
-        elif game.win[1] == 2:
+        elif winner == HexColour.BLUE:
             player2.rating, player1.rating = rate_1vs1(player2.rating, player1.rating, drawn=False)
     return player1.rating, player2.rating
 
