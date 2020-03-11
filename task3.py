@@ -7,6 +7,7 @@ from hex.game import HexGame
 from hex.players.alphabeta import HexPlayerEnhancedAB
 from hex.players.montecarlo import HexPlayerMonteCarlo
 from hex.colour import HexColour
+from hex.players.base import HexPlayerRandom
 
 
 def bar_plot(ratings, names, plot_title=''):
@@ -38,6 +39,7 @@ def main():
         HexPlayerEnhancedAB(10, True),
         HexPlayerEnhancedAB(10, False),
         HexPlayerMonteCarlo(300, 1),
+        HexPlayerRandom(),
     ]
     n_runs = ceil(2 * log(len(players), 2))
     start = time()
