@@ -3,11 +3,12 @@ from math import log, ceil
 from time import time
 import matplotlib.pyplot as plt
 from trueskill import rate_1vs1
-from hexgame import HexGame
-from hexplayer import HexPlayerDijkstra, HexPlayerRandom, HexPlayerEnhanced
+from hex.game import HexGame
+from hex.players.alphabeta import HexPlayerEnhanced
+from hex.players.montecarlo import HexPlayerMonteCarlo
 
 
-def bar_plot(ratings, names, plot_title=""):
+def bar_plot(ratings, names, plot_title=''):
     y = ratings
     x = names
     plt.bar(x, y)
@@ -33,11 +34,11 @@ def match(player1, player2, n_games, size):
 
 def main():
     board_size = 4
-    players = [HexPlayerDijkstra(3),
-               HexPlayerDijkstra(4),
-               HexPlayerRandom(3),
-               HexPlayerEnhanced(10, True),
-               HexPlayerEnhanced(10, False)]
+    players = [
+        HexPlayerEnhanced(10, True),
+        HexPlayerEnhanced(10, False),
+        HexPlayerMonteCarlo(300, 1),
+    ]
     n_runs = ceil(2 * log(len(players), 2))
     start = time()
     for player1, player2 in combinations(players, 2):
@@ -47,9 +48,9 @@ def main():
     time_taken = done - start
     names = [player.__str__() for player in players]
     ratings = [player.rating.mu - 3 * player.rating.sigma for player in players]
-    print("time in seconds\t\t:", time_taken)
+    print('time in seconds\t\t:', time_taken)
     bar_plot(ratings, names)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
