@@ -19,7 +19,7 @@ def bar_plot(ratings, names, plot_title=''):
     for i, v in enumerate(y):
         plt.text(xlocs[i] - 0.25, v + 0.01, str(round(v, 2)))
     plt.xticks(xlocs, x)
-    plt.savefig('ratings.pdf')
+    plt.savefig('figures/ratings.pdf')
 
 
 def match(player1, player2, n_games, size):
