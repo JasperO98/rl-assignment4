@@ -7,7 +7,7 @@ from random import randint
 from hex.players.base import HexPlayer
 
 
-class HexPlayerRandom(HexPlayer):
+class HexPlayerRandomAB(HexPlayer):
     def __init__(self, depth):
         super().__init__()
         self.tree_cur = None
@@ -16,7 +16,7 @@ class HexPlayerRandom(HexPlayer):
         self.use_tt = False
 
     def __str__(self):
-        return 'Random\n(depth ' + str(self.depth) + ')'
+        return 'AB Random\n(depth ' + str(self.depth) + ')'
 
     def eval(self, board, colour):
         return randint(-9, 9)
@@ -114,22 +114,22 @@ class HexPlayerRandom(HexPlayer):
             return parent
 
 
-class HexPlayerDijkstra(HexPlayerRandom):
+class HexPlayerDijkstraAB(HexPlayerRandomAB):
     def eval(self, board, colour):
         return board.dijkstra(colour.invert()) - board.dijkstra(colour)
 
     def __str__(self):
-        return 'Dijkstra\n(depth ' + str(self.depth) + ')'
+        return 'AB Dijkstra\n(depth ' + str(self.depth) + ')'
 
 
-class HexPlayerEnhanced(HexPlayerDijkstra):
+class HexPlayerEnhancedAB(HexPlayerDijkstraAB):
     def __init__(self, timeout, use_tt):
         super().__init__(timeout)
         self.use_tt = use_tt
         self.reached = 0
 
     def __str__(self):
-        return 'ID' + ('TT' if self.use_tt else '') + '\n(timeout ' + str(self.depth) + ')'
+        return 'ID' + ('TT' if self.use_tt else '') + '\n(timeout ' + str(self.depth) + 's)'
 
     def get_move(self, board, colour, renders):
         stop = time() + self.depth

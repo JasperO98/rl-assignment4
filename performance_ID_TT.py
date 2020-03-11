@@ -9,7 +9,7 @@ import seaborn as sns; sns.set()
 import numpy as np
 
 from hex.game import HexGame
-from hex.players.alphabeta import HexPlayerEnhanced
+from hex.players.alphabeta import HexPlayerEnhancedAB
 
 
 def simulate_game(sizes, timeout, TT_on, iter, player1, player2):
@@ -30,7 +30,7 @@ def simulate_game(sizes, timeout, TT_on, iter, player1, player2):
 
 
 if __name__ == '__main__':
-    players = [HexPlayerEnhanced, HexPlayerEnhanced]
+    players = [HexPlayerEnhancedAB, HexPlayerEnhancedAB]
     TT_on = [True]
     task = ['ID&TT']
     player2 = None

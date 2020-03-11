@@ -4,7 +4,7 @@ from time import time
 import matplotlib.pyplot as plt
 from trueskill import rate_1vs1
 from hex.game import HexGame
-from hex.players.alphabeta import HexPlayerEnhanced
+from hex.players.alphabeta import HexPlayerEnhancedAB
 from hex.players.montecarlo import HexPlayerMonteCarlo
 from hex.colour import HexColour
 
@@ -35,8 +35,8 @@ def match(player1, player2, n_games, size):
 def main():
     board_size = 4
     players = [
-        HexPlayerEnhanced(10, True),
-        HexPlayerEnhanced(10, False),
+        HexPlayerEnhancedAB(10, True),
+        HexPlayerEnhancedAB(10, False),
         HexPlayerMonteCarlo(300, 1),
     ]
     n_runs = ceil(2 * log(len(players), 2))
