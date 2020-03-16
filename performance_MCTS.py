@@ -9,7 +9,7 @@ import seaborn as sns; sns.set()
 import numpy as np
 
 from hex.game import HexGame
-from hex.players.montecarlo import HexPlayerMonteCarlo
+from hex.players.montecarlo import HexPlayerMonteCarloIterations
 
 
 def simulate_game(sizes, iter, player1, player2, N, Cp):
@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
     task = 'MCTS_N{}-{}_Cp{}-{}_Size{}-{}'.format(min(N), max(N), min(Cp), max(Cp), min(board_size), max(board_size))
 
-    player1 = HexPlayerMonteCarlo
+    player1 = HexPlayerMonteCarloIterations
     player2 = None
 
     iter = 1

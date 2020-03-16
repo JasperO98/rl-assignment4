@@ -7,7 +7,7 @@ from ctypes import c_long, sizeof
 from tqdm import trange
 
 
-class HexPlayerMonteCarlo(HexPlayer):
+class HexPlayerMonteCarloIterations(HexPlayer):
     def __init__(self, n, cp):
         super().__init__()
         self.n = n
@@ -82,3 +82,11 @@ class HexPlayerMonteCarlo(HexPlayer):
 
         # return current vertex
         return parent, won
+
+
+class HexPlayerMonteCarloTime(HexPlayerMonteCarloIterations):
+    def __init__(self, timeout, cp):
+        super().__init__(timeout, cp)
+
+    def __str__(self):
+        return 'MCTS\n(timeout ' + str(self.n) + 's, Cₚ=' + str(self.cp) + ')'

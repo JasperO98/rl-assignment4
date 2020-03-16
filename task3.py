@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from trueskill import rate_1vs1
 from hex.game import HexGame
 from hex.players.alphabeta import HexPlayerEnhancedAB
-from hex.players.montecarlo import HexPlayerMonteCarlo
+from hex.players.montecarlo import HexPlayerMonteCarloIterations
 from hex.colour import HexColour
 from hex.players.base import HexPlayerRandom
 
@@ -38,7 +38,7 @@ def main():
     players = [
         HexPlayerEnhancedAB(10, True),
         HexPlayerEnhancedAB(10, False),
-        HexPlayerMonteCarlo(300, 1),
+        HexPlayerMonteCarloIterations(300, 1),
         HexPlayerRandom(),
     ]
     n_runs = ceil(2 * log(len(players), 2))
