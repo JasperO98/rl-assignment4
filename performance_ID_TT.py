@@ -1,23 +1,16 @@
-import matplotlib
-import sys
-import os
-import time
-import itertools
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns; sns.set()
+import seaborn as sns
 import numpy as np
-
 from hex.game import HexGame
 from hex.players.alphabeta import HexPlayerEnhancedAB
 
 
 def simulate_game(sizes, timeout, TT_on, iter, player1, player2):
-    combinations = [(s,t) for s in sizes for t in timeout]
+    combinations = [(s, t) for s in sizes for t in timeout]
     df = pd.DataFrame(columns=['Board size', 'Timeout', 'Depth'])
     for comb in combinations:
         print(comb)
-        # sys.stdout = open(os.devnull, 'w')
         s = comb[0]
         t = comb[1]
         for i in range(iter):
@@ -25,7 +18,6 @@ def simulate_game(sizes, timeout, TT_on, iter, player1, player2):
             game = HexGame(s, p1, player2)
             game.step([])
             df.loc[len(df)] = (s, t, p1.reached)
-        # sys.stdout = sys.__stdout__
     return df
 
 
@@ -48,7 +40,7 @@ if __name__ == '__main__':
         df['Depth'] = df['Depth'].astype(int)
         print(df.head())
 
-        ax = sns.lineplot(x="Timeout", y="Depth", hue="Board size", data=df)
+        ax = sns.lineplot(x='Timeout', y='Depth', hue='Board size', data=df)
 
         plt.xticks(timeout)
         plt.xlabel('ID time threshold (s)')
