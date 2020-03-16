@@ -8,7 +8,7 @@ class HexGame:
         self.player1 = player1
         self.player2 = player2
 
-    def step(self, renders=('board', 'win')):
+    def step(self, renders=('board', 'win', 'progress')):
         if 'board' in renders:
             self.board.render(1000)
 
@@ -18,7 +18,7 @@ class HexGame:
             move = self.player2.get_move(self.board, HexColour.BLUE, renders)
         self.board.do_move(move)
 
-    def play(self, renders=('board', 'win')):
+    def play(self, renders=('board', 'win', 'progress')):
         while not self.board.is_game_over():
             self.step(renders)
 

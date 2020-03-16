@@ -59,7 +59,9 @@ class HexPlayerMonteCarloIterations(HexPlayer):
         return self.string_to_move(self.tree.es[self.tree.get_eid(parent, child)]['label'])
 
     def monte_carlo(self, board, colour, renders):
-        for _ in trange(self.n):
+        for _ in (
+                trange(self.n) if 'progress' in renders else range(self.n)
+        ):
             self.walk(board, colour)
             self.maybe_show_tree(renders)
 
