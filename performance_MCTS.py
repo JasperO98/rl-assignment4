@@ -32,8 +32,8 @@ def simulate_game(sizes, iter, player1, player2, N, Cp):
 
 
 if __name__ == '__main__':
-    N = [100]
-    Cp = [1]
+    N = range(100, 1100, 100)
+    Cp = list(np.arange(0.1, 2, 0.1))
     board_size = range(3, 7)
 
     task = 'MCTS_N{}-{}_Cp{}-{}_Size{}-{}'.format(min(N), max(N), min(Cp), max(Cp), min(board_size), max(board_size))
