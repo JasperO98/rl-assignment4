@@ -82,13 +82,17 @@ class HexBoard:
                 return False
         return True
 
-    def children(self):
+    def moves(self):
         for i in range(self.size):
             for j in range(self.size):
                 if self.is_empty((i, j)):
-                    child = deepcopy(self)
-                    child.do_move((i, j))
-                    yield child, (i, j)
+                    yield i, j
+
+    def children(self):
+        for move in self.moves():
+            child = deepcopy(self)
+            child.do_move(move)
+            yield child, move
 
     def render(self, timeout, mask=None):
         # calculate all relevant lengths

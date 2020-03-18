@@ -1,6 +1,7 @@
 import re
 from abc import ABC, abstractmethod
 from trueskill import TrueSkill
+from random import choice
 
 
 class HexPlayer(ABC):
@@ -42,3 +43,11 @@ class HexPlayerHuman(HexPlayer):
 
     def __str__(self):
         return 'Human Player'
+
+
+class HexPlayerRandom(HexPlayer):
+    def get_move(self, board, colour, renders):
+        return choice(list(board.moves()))
+
+    def __str__(self):
+        return 'Random Player'

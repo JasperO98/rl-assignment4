@@ -5,9 +5,10 @@ import numpy as np
 from math import sqrt, log
 from ctypes import c_long, sizeof
 from tqdm import trange
+from time import time
 
 
-class HexPlayerMonteCarlo(HexPlayer):
+class HexPlayerMonteCarloIterations(HexPlayer):
     def __init__(self, n, cp):
         super().__init__()
         self.n = n
@@ -38,6 +39,7 @@ class HexPlayerMonteCarlo(HexPlayer):
             return np.inf
 
     def get_move(self, board, colour, renders):
+        # clean up cached tree
         try:
             parent = self.tree.vs.find(hash=hash(board))
             self.tree.delete_vertices(set(range(len(self.tree.vs))) - set(self.tree.neighborhood(
@@ -48,13 +50,20 @@ class HexPlayerMonteCarlo(HexPlayer):
         except (ValueError, KeyError):
             self.tree.delete_vertices(self.tree.vs)
 
-        for _ in trange(self.n):
-            self.walk(board, colour)
-            self.maybe_show_tree(renders)
+        # perform MC algorithm using the cached tree
+        self.monte_carlo(board, colour, renders)
 
+        # determine best move from cached tree
         parent = self.tree.vs.find(hash=hash(board))
         child = max(npr.permutation(parent.successors()), key=lambda v: v['wins'] / v['visits'])
         return self.string_to_move(self.tree.es[self.tree.get_eid(parent, child)]['label'])
+
+    def monte_carlo(self, board, colour, renders):
+        for _ in (
+                trange(self.n) if 'progress' in renders else range(self.n)
+        ):
+            self.walk(board, colour)
+            self.maybe_show_tree(renders)
 
     def walk(self, board, colour):
         # get current vertex
@@ -82,3 +91,17 @@ class HexPlayerMonteCarlo(HexPlayer):
 
         # return current vertex
         return parent, won
+
+
+class HexPlayerMonteCarloTime(HexPlayerMonteCarloIterations):
+    def __init__(self, timeout, cp):
+        super().__init__(timeout, cp)
+
+    def __str__(self):
+        return 'MCTS\n(timeout ' + str(self.n) + 's, Cₚ=' + str(self.cp) + ')'
+
+    def monte_carlo(self, board, colour, renders):
+        stop = time() + self.n
+        while time() < stop:
+            self.walk(board, colour)
+            self.maybe_show_tree(renders)
