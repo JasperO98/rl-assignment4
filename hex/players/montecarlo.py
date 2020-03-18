@@ -3,7 +3,7 @@ import igraph as ig
 import numpy.random as npr
 import numpy as np
 from math import sqrt, log
-from ctypes import c_long, sizeof
+from ctypes import c_int, sizeof
 from tqdm import trange
 from time import time
 
@@ -44,7 +44,7 @@ class HexPlayerMonteCarloIterations(HexPlayer):
             parent = self.tree.vs.find(hash=hash(board))
             self.tree.delete_vertices(set(range(len(self.tree.vs))) - set(self.tree.neighborhood(
                 vertices=parent,
-                order=2 ** (sizeof(c_long) * 8 - 1) - 1,  # maximum for a C long on this system
+                order=2 ** (sizeof(c_int) * 8 - 1) - 1,  # maximum for a C long on this system
                 mode=ig.OUT,
             )))
         except (ValueError, KeyError):
