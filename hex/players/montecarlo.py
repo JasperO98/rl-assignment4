@@ -44,7 +44,7 @@ class HexPlayerMonteCarloIterations(HexPlayer):
             parent = self.tree.vs.find(hash=hash(board))
             self.tree.delete_vertices(set(range(len(self.tree.vs))) - set(self.tree.neighborhood(
                 vertices=parent,
-                order=2 ** (sizeof(c_int) * 8 - 1) - 1,  # maximum for a C long on this system
+                order=2 ** (sizeof(c_int) * 8 - 1) - 1,  # maximum for a C int on this system
                 mode=ig.OUT,
             )))
         except (ValueError, KeyError):
