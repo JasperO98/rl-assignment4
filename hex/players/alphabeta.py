@@ -31,7 +31,7 @@ class HexPlayerRandomAB(HexPlayer):
                 bbox=(1024, 512),
             )
 
-    def get_move(self, board, colour, renders):
+    def determine_move(self, board, colour, renders):
         self.tree_cur = ig.Graph(directed=True)
         alphabeta = self.alphabeta(True, self.depth, -np.inf, np.inf, board, colour)
         self.maybe_show_tree(renders)
@@ -131,7 +131,7 @@ class HexPlayerEnhancedAB(HexPlayerDijkstraAB):
     def __str__(self):
         return 'ID' + ('TT' if self.use_tt else '') + '\n(timeout ' + str(self.depth) + 's)'
 
-    def get_move(self, board, colour, renders):
+    def determine_move(self, board, colour, renders):
         stop = time() + self.depth
         alphabeta = None
 

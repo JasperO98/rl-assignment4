@@ -11,10 +11,10 @@ class HexPlayer(ABC):
         self.rating = HexPlayer.ENV.create_rating()
 
     def __repr__(self):
-        return self.__str__().replace('\n', ' ')
+        return str(self).replace('\n', ' ')
 
     @abstractmethod
-    def get_move(self, board, colour, renders):
+    def determine_move(self, board, colour, renders):
         pass
 
     @abstractmethod
@@ -36,7 +36,7 @@ class HexPlayer(ABC):
 
 
 class HexPlayerHuman(HexPlayer):
-    def get_move(self, board, colour, renders):
+    def determine_move(self, board, colour, renders):
         while True:
             move = self.string_to_move(input('Coordinates: ').lower())
             if not board.exists(move) or not board.is_empty(move):
@@ -49,7 +49,7 @@ class HexPlayerHuman(HexPlayer):
 
 
 class HexPlayerRandom(HexPlayer):
-    def get_move(self, board, colour, renders):
+    def determine_move(self, board, colour, renders):
         return choice(list(board.moves()))
 
     def __str__(self):

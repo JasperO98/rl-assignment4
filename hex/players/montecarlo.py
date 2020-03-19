@@ -38,7 +38,7 @@ class HexPlayerMonteCarloIterations(HexPlayer):
         except (ValueError, KeyError):
             return np.inf
 
-    def get_move(self, board, colour, renders):
+    def determine_move(self, board, colour, renders):
         # clean up cached tree
         try:
             parent = self.tree.vs.find(hash=hash(board))
