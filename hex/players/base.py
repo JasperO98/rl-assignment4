@@ -10,6 +10,9 @@ class HexPlayer(ABC):
     def __init__(self):
         self.rating = HexPlayer.ENV.create_rating()
 
+    def __repr__(self):
+        return self.__str__().replace('\n', ' ')
+
     @abstractmethod
     def get_move(self, board, colour, renders):
         pass
