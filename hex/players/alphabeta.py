@@ -18,7 +18,7 @@ class HexPlayerRandomAB(HexPlayer):
     def __str__(self):
         return 'AB Random\n(depth ' + str(self.depth) + ')'
 
-    def eval(self, board, colour):
+    def eval(self, board):
         return randint(-9, 9)
 
     def maybe_show_tree(self, renders):
@@ -31,9 +31,9 @@ class HexPlayerRandomAB(HexPlayer):
                 bbox=(1024, 512),
             )
 
-    def determine_move(self, board, colour, renders):
+    def determine_move(self, board, renders):
         self.tree_cur = ig.Graph(directed=True)
-        alphabeta = self.alphabeta(True, self.depth, -np.inf, np.inf, board, colour)
+        alphabeta = self.alphabeta(True, self.depth, -np.inf, np.inf, board)
         self.maybe_show_tree(renders)
         return alphabeta
 
@@ -45,7 +45,7 @@ class HexPlayerRandomAB(HexPlayer):
                 pass
         return 0
 
-    def alphabeta(self, top, depth, lower, upper, board, colour):
+    def alphabeta(self, top, depth, lower, upper, board):
         # check transposition table for board state
         if self.use_tt:
             try:
@@ -55,7 +55,7 @@ class HexPlayerRandomAB(HexPlayer):
 
         # leaf node
         if depth == 0 or board.is_game_over():
-            value = self.eval(board, colour)
+            value = self.eval(board)
             return self.tree_cur.add_vertex(
                 label=value,
                 hash=hash(board),
@@ -71,22 +71,22 @@ class HexPlayerRandomAB(HexPlayer):
         for child, move in sorted(
                 board.children(),
                 key=self.board_score_for_id,
-                reverse=board.turn() == colour,
+                reverse=board.turn() == self.colour,
         ):
             pass
 
             # get data for child node
             vertices.append((
-                self.alphabeta(False, depth - 1, lower, upper, child, colour),
+                self.alphabeta(False, depth - 1, lower, upper, child),
                 self.move_to_string(move),
             ))
             bound = vertices[-1][0]['value']
 
             # update global bounds
-            if board.turn() == colour and bound > lower:
+            if board.turn() == self.colour and bound > lower:
                 lower = bound
                 best = move
-            if board.turn() == colour.invert() and bound < upper:
+            if board.turn() == self.colour.invert() and bound < upper:
                 upper = bound
                 best = move
 
@@ -98,7 +98,7 @@ class HexPlayerRandomAB(HexPlayer):
         parent = self.tree_cur.add_vertex(
             label='(' + str(lower) + ',' + str(upper) + ')',
             hash=hash(board),
-            value=lower if board.turn() == colour else upper,
+            value=lower if board.turn() == self.colour else upper,
             width=55,
             height=22,
             shape='rectangle',
@@ -115,8 +115,8 @@ class HexPlayerRandomAB(HexPlayer):
 
 
 class HexPlayerDijkstraAB(HexPlayerRandomAB):
-    def eval(self, board, colour):
-        return board.dijkstra(colour.invert()) - board.dijkstra(colour)
+    def eval(self, board):
+        return board.dijkstra(self.colour.invert()) - board.dijkstra(self.colour)
 
     def __str__(self):
         return 'AB Dijkstra\n(depth ' + str(self.depth) + ')'
@@ -131,7 +131,7 @@ class HexPlayerEnhancedAB(HexPlayerDijkstraAB):
     def __str__(self):
         return 'ID' + ('TT' if self.use_tt else '') + '\n(timeout ' + str(self.depth) + 's)'
 
-    def determine_move(self, board, colour, renders):
+    def determine_move(self, board, renders):
         stop = time() + self.depth
         alphabeta = None
 
@@ -139,7 +139,7 @@ class HexPlayerEnhancedAB(HexPlayerDijkstraAB):
             self.tree_prev = self.tree_cur
             self.tree_cur = ig.Graph(directed=True)
             try:
-                alphabeta = func_timeout(stop - time(), self.alphabeta, (True, i, -np.inf, np.inf, board, colour))
+                alphabeta = func_timeout(stop - time(), self.alphabeta, (True, i, -np.inf, np.inf, board))
             except FunctionTimedOut:
                 return alphabeta
             self.maybe_show_tree(renders)
