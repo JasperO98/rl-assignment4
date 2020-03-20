@@ -5,7 +5,7 @@ from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
 from itertools import permutations
 from hex.players.montecarlo import HexPlayerMonteCarloTime
-from trueskill import rate_1vs1
+from trueskill import rate_1vs1, TrueSkill
 import matplotlib.pyplot as plt
 import seaborn as sns
 from time import time
@@ -15,7 +15,8 @@ class HexTournament:
     def __init__(self, size, players):
         self.size = size
         self.players = players
-        self.durations = [0] * len(players)
+        self.durations = [0 for _ in range(len(players))]
+        self.ratings = [TrueSkill(mu=25, sigma=8 + 1 / 3, draw_probability=0).create_rating() for _ in range(len(players))]
 
     def _match_unpack(self, args):
         return self.match(*args)
@@ -34,14 +35,14 @@ class HexTournament:
         matches = list(permutations(range(len(self.players)), 2)) * ceil(2 * log(len(self.players), 2))
         with Pool(cpu_count() - 1) as pool:
             for winner, loser, duration in tqdm(iterable=pool.imap(self._match_unpack, matches), total=len(matches)):
-                self.players[winner].rating, self.players[loser].rating = rate_1vs1(self.players[winner].rating, self.players[loser].rating)
+                self.ratings[winner], self.ratings[loser] = rate_1vs1(self.ratings[winner], self.ratings[loser])
                 self.durations[winner] += duration / sum(winner in match for match in matches) / 2
                 self.durations[loser] += duration / sum(loser in match for match in matches) / 2
 
     def task3(self):
         sns.barplot(
             x=[str(player) for player in self.players],
-            y=[player.rating.mu - 3 * player.rating.sigma for player in self.players],
+            y=[rating.mu - 3 * rating.sigma for rating in self.ratings],
         )
         plt.ylabel('TrueSkill Score')
         plt.show()
