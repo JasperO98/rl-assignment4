@@ -8,7 +8,6 @@ from hex.players.montecarlo import HexPlayerMonteCarloTime
 from trueskill import rate_1vs1, TrueSkill
 import matplotlib.pyplot as plt
 import seaborn as sns
-from time import time
 
 
 class HexTournament:
@@ -22,22 +21,19 @@ class HexTournament:
         return self.match(*args)
 
     def match(self, pi1, pi2):
-        start = time()
-        winner = HexGame(self.size, self.players[pi1], self.players[pi2]).play([])
-        stop = time()
-
-        if winner == HexColour.RED:
-            return pi1, pi2, stop - start
-        elif winner == HexColour.BLUE:
-            return pi2, pi1, stop - start
+        winner, loser = HexGame(self.size, self.players[pi1], self.players[pi2]).play([])
+        if winner.colour == HexColour.RED:
+            return pi1, pi2, winner.active, loser.active
+        if winner.colour == HexColour.BLUE:
+            return pi2, pi1, winner.active, loser.active
 
     def tournament(self):
         matches = list(permutations(range(len(self.players)), 2)) * ceil(2 * log(len(self.players), 2))
         with Pool(cpu_count() - 1) as pool:
-            for winner, loser, duration in tqdm(iterable=pool.imap(self._match_unpack, matches), total=len(matches)):
-                self.ratings[winner], self.ratings[loser] = rate_1vs1(self.ratings[winner], self.ratings[loser])
-                self.durations[winner] += duration / sum(winner in match for match in matches) / 2
-                self.durations[loser] += duration / sum(loser in match for match in matches) / 2
+            for wi, li, wd, ld in tqdm(iterable=pool.imap(self._match_unpack, matches), total=len(matches)):
+                self.ratings[wi], self.ratings[li] = rate_1vs1(self.ratings[wi], self.ratings[li])
+                self.durations[wi] += wd / sum(wi in match for match in matches)
+                self.durations[li] += ld / sum(li in match for match in matches)
 
     def task3(self):
         sns.barplot(
@@ -52,7 +48,7 @@ class HexTournament:
 
 
 if __name__ == '__main__':
-    ht = HexTournament(4, (
+    ht = HexTournament(1, (
         HexPlayerMonteCarloTime(1, 1),
         HexPlayerMonteCarloTime(2, 1),
         HexPlayerMonteCarloTime(3, 1),

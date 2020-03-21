@@ -15,11 +15,10 @@ class HexGame:
         if 'board' in renders:
             self.board.render(1000)
 
-        if self.player1 and self.board.turn() == HexColour.RED:
-            move = self.player1.get_move(self.board, HexColour.RED, renders)
-        if self.player2 and self.board.turn() == HexColour.BLUE:
-            move = self.player2.get_move(self.board, HexColour.BLUE, renders)
-        self.board.do_move(move)
+        for player in (self.player1, self.player2):
+            if player.colour == self.board.turn():
+                self.board.do_move(player.get_move(self.board, renders))
+                break
 
     def play(self, renders=('board', 'win', 'progress')):
         while not self.board.is_game_over():
@@ -28,12 +27,12 @@ class HexGame:
         if 'board' in renders:
             self.board.render(1000)
 
-        if self.board.check_win(HexColour.RED):
+        if self.board.check_win(self.player1.colour):
             if 'win' in renders:
-                print('Red Wins!')
-            return HexColour.RED
+                print(self.player1.colour + ' wins!')
+            return self.player1, self.player2
 
-        if self.board.check_win(HexColour.BLUE):
+        if self.board.check_win(self.player2.colour):
             if 'win' in renders:
-                print('Blue Wins!')
-            return HexColour.BLUE
+                print(self.player2.colour + ' wins!')
+            return self.player2, self.player1
