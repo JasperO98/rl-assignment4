@@ -7,9 +7,9 @@ class HexGame:
     def __init__(self, size, player1, player2):
         self.board = HexBoard(size)
         self.player1 = deepcopy(player1)
-        self.player1 = HexColour.RED
+        self.player1.colour = HexColour.RED
         self.player2 = deepcopy(player2)
-        self.player2 = HexColour.BLUE
+        self.player2.colour = HexColour.BLUE
 
     def step(self, renders=('board', 'win', 'progress')):
         if 'board' in renders:
