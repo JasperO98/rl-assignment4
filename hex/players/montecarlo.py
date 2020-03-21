@@ -98,7 +98,7 @@ class HexPlayerMonteCarloTime(HexPlayerMonteCarloIterations):
         super().__init__(timeout, cp)
 
     def __str__(self):
-        return 'MCTS\n(timeout ' + str(self.n) + 's, Cₚ=' + str(self.cp) + ')'
+        return 'MCTS\n(timeout ' + str(self.n) + 's, Cp=' + str(self.cp) + ')'
 
     def monte_carlo(self, board, renders):
         stop = time() + self.n

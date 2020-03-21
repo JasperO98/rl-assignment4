@@ -13,9 +13,9 @@ from tqdm import tqdm
 
 
 def scat_plot(ratings, names, time_list, plot_title=''):
-    print(ratings)
-    print(names)
-    print(time_list)
+
+
+
     plt.clf()
     plt.figure(figsize=(20, 15))
     y = ratings
