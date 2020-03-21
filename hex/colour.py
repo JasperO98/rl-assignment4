@@ -8,5 +8,11 @@ class HexColour(Enum):
     def invert(self):
         if self == HexColour.RED:
             return HexColour.BLUE
-        else:
+        if self == HexColour.BLUE:
             return HexColour.RED
+
+    def __str__(self):
+        if self == HexColour.RED:
+            return 'RED'
+        if self == HexColour.BLUE:
+            return 'BLUE'

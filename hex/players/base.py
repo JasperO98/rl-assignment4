@@ -1,17 +1,25 @@
 import re
 from abc import ABC, abstractmethod
-from trueskill import TrueSkill
+from time import time
 from random import choice
 
 
 class HexPlayer(ABC):
-    ENV = TrueSkill(mu=25, sigma=8 + 1 / 3, draw_probability=0)
-
     def __init__(self):
-        self.rating = HexPlayer.ENV.create_rating()
+        self.active = 0
+        self.colour = None
+
+    def __repr__(self):
+        return str(self).replace('\n', ' ')
+
+    def get_move(self, board, renders):
+        start = time()
+        move = self.determine_move(board, renders)
+        self.active += time() - start
+        return move
 
     @abstractmethod
-    def get_move(self, board, colour, renders):
+    def determine_move(self, board, renders):
         pass
 
     @abstractmethod
@@ -33,7 +41,7 @@ class HexPlayer(ABC):
 
 
 class HexPlayerHuman(HexPlayer):
-    def get_move(self, board, colour, renders):
+    def determine_move(self, board, renders):
         while True:
             move = self.string_to_move(input('Coordinates: ').lower())
             if not board.exists(move) or not board.is_empty(move):
@@ -46,7 +54,7 @@ class HexPlayerHuman(HexPlayer):
 
 
 class HexPlayerRandom(HexPlayer):
-    def get_move(self, board, colour, renders):
+    def determine_move(self, board, renders):
         return choice(list(board.moves()))
 
     def __str__(self):

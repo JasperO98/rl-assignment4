@@ -38,34 +38,34 @@ class HexPlayerMonteCarloIterations(HexPlayer):
         except (ValueError, KeyError):
             return np.inf
 
-    def get_move(self, board, colour, renders):
+    def determine_move(self, board, renders):
         # clean up cached tree
         try:
             parent = self.tree.vs.find(hash=hash(board))
             self.tree.delete_vertices(set(range(len(self.tree.vs))) - set(self.tree.neighborhood(
                 vertices=parent,
-                order=2 ** (sizeof(c_int) * 8 - 1) - 1,  # maximum for a C long on this system
+                order=2 ** (sizeof(c_int) * 8 - 1) - 1,  # maximum for a C int on this system
                 mode=ig.OUT,
             )))
         except (ValueError, KeyError):
             self.tree.delete_vertices(self.tree.vs)
 
         # perform MC algorithm using the cached tree
-        self.monte_carlo(board, colour, renders)
+        self.monte_carlo(board, renders)
 
         # determine best move from cached tree
         parent = self.tree.vs.find(hash=hash(board))
         child = max(npr.permutation(parent.successors()), key=lambda v: v['wins'] / v['visits'])
         return self.string_to_move(self.tree.es[self.tree.get_eid(parent, child)]['label'])
 
-    def monte_carlo(self, board, colour, renders):
+    def monte_carlo(self, board, renders):
         for _ in (
                 trange(self.n) if 'progress' in renders else range(self.n)
         ):
-            self.walk(board, colour)
+            self.walk(board)
             self.maybe_show_tree(renders)
 
-    def walk(self, board, colour):
+    def walk(self, board):
         # get current vertex
         try:
             parent = self.tree.vs.find(hash=hash(board))
@@ -74,12 +74,12 @@ class HexPlayerMonteCarloIterations(HexPlayer):
 
         # leaf node stuff
         if board.is_game_over():
-            won = board.check_win(colour)
+            won = board.check_win(self.colour)
 
         # normal node stuff
         else:
             child, move = max(npr.permutation(list(board.children())), key=lambda x: self.uct_for_board(parent, x[0]))
-            child, won = self.walk(child, colour)
+            child, won = self.walk(child)
             if child not in parent.successors():
                 self.tree.add_edge(parent, child, label=self.move_to_string(move))
 
@@ -100,8 +100,8 @@ class HexPlayerMonteCarloTime(HexPlayerMonteCarloIterations):
     def __str__(self):
         return 'MCTS\n(timeout ' + str(self.n) + 's, Cp=' + str(self.cp) + ')'
 
-    def monte_carlo(self, board, colour, renders):
+    def monte_carlo(self, board, renders):
         stop = time() + self.n
         while time() < stop:
-            self.walk(board, colour)
+            self.walk(board)
             self.maybe_show_tree(renders)
