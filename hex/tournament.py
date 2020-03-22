@@ -1,13 +1,15 @@
-from math import log, ceil
+from math import log, ceil, floor
 from hex.game import HexGame
 from hex.colour import HexColour
 from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
 from itertools import permutations
-from hex.players.montecarlo import HexPlayerMonteCarloTime
+from hex.players.montecarlo import HexPlayerMonteCarloTime, HexPlayerMonteCarloIterations
 from trueskill import rate_1vs1, TrueSkill
 import matplotlib.pyplot as plt
 import seaborn as sns
+import csv
+import numpy as np
 
 
 class HexTournament:
@@ -44,7 +46,30 @@ class HexTournament:
         plt.show()
 
     def task4(self):
-        pass
+        names = [str(player) for player in self.players]
+        ratings = [rating.mu - 3 * rating.sigma for rating in self.ratings]
+
+        plt.clf()
+        plt.figure(figsize=(20, 15))
+        y = ratings
+        x = self.durations
+        for i in range(len(names)):
+            plt.plot(x[i], y[i], linestyle='none', marker='o', label=names[i])
+
+        plt.legend(numpoints=1, bbox_to_anchor=(1, 0.5), loc='center left')
+
+        plt.ylabel('TrueSkill value')
+        plt.xlabel('Average game duration in seconds')
+
+        plt.xticks(range(floor(min(x)), ceil(max(x)), 10))
+
+        plt.savefig('../figures/task4.pdf')
+
+        rows = [ratings, [n[5:] for n in names], x]
+        with open('../figures/test.csv', "w", encoding='utf-8') as f:
+            writer = csv.writer(f)
+            for row in rows:
+                writer.writerow(row)
 
 
 if __name__ == '__main__':
@@ -56,3 +81,9 @@ if __name__ == '__main__':
     ht.tournament()
     ht.task3()
     print(ht.durations)
+
+    N = np.round(np.geomspace(1, 512, 10)).astype(int)
+    Cp = np.around(np.linspace(0, 2, 7), 2)
+    ht = HexTournament(4, tuple(HexPlayerMonteCarloIterations(n, c) for n in N for c in Cp))
+    ht.tournament()
+    ht.task4()
