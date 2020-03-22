@@ -63,13 +63,16 @@ class HexTournament:
 
         plt.xticks(range(floor(min(x)), ceil(max(x)), 10))
 
-        plt.savefig('../figures/task4.pdf')
+        if __name__ == '__main__':
+            plt.show()
+        else:
+            plt.savefig('figures/task4.pdf')
 
-        rows = [ratings, [n[5:] for n in names], x]
-        with open('../figures/test.csv', "w", encoding='utf-8') as f:
-            writer = csv.writer(f)
-            for row in rows:
-                writer.writerow(row)
+            rows = [ratings, [n[5:] for n in names], x]
+            with open('figures/test.csv', "w", encoding='utf-8') as f:
+                writer = csv.writer(f)
+                for row in rows:
+                    writer.writerow(row)
 
 
 if __name__ == '__main__':
