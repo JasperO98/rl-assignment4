@@ -82,8 +82,11 @@ if __name__ == '__main__':
     ht.task3()
     print(ht.durations)
 
-    N = np.round(np.geomspace(1, 512, 10)).astype(int)
-    Cp = np.around(np.linspace(0, 2, 7), 2)
-    ht = HexTournament(4, tuple(HexPlayerMonteCarloIterations(n, c) for n in N for c in Cp))
+    ht = HexTournament(1, (
+        HexPlayerMonteCarloIterations(5, 1),
+        HexPlayerMonteCarloIterations(5, 1),
+        HexPlayerMonteCarloIterations(5, 1),
+    ))
     ht.tournament()
     ht.task4()
+    print(ht.durations)
