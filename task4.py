@@ -2,6 +2,7 @@ from hex.players.montecarlo import HexPlayerMonteCarloIterations
 import numpy as np
 from hex.tournament import HexTournament
 from itertools import combinations
+from math import logn
 
 
 def main():
@@ -13,8 +14,7 @@ def main():
     print('Cp:', Cp)
     print()
     print('Number of players:', len(players))
-    print('Number of games:', len(list(combinations(players, 2))))
-    print()
+    print('Simulating games:')
 
     ht = HexTournament(4, players)
     ht.tournament()
