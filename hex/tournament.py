@@ -56,7 +56,8 @@ class HexTournament:
         for i in range(len(names)):
             plt.plot(x[i], y[i], linestyle='none', marker='o', label=names[i])
 
-        plt.legend(numpoints=1, bbox_to_anchor=(1, 0.5), loc='center left')
+        plt.subplots_adjust(left=0.03, right=0.7)
+        plt.legend(numpoints=1, loc='center right', bbox_to_anchor=(1.35, 0.5), ncol=2)
 
         plt.ylabel('TrueSkill value')
         plt.xlabel('Average game duration in seconds')
