@@ -53,16 +53,20 @@ class HexTournament:
         plt.figure(figsize=(20, 15))
         y = ratings
         x = self.durations
+
+        m = ['x', 's', '*', 'p', 'D', '^', 'o']
         for i in range(len(names)):
-            plt.plot(x[i], y[i], linestyle='none', marker='o', label=names[i])
+            plt.plot(x[i], y[i], linestyle='none', marker=marker=m[int(i*0.1)], label=names[i])
 
         plt.subplots_adjust(left=0.03, right=0.7)
-        plt.legend(numpoints=1, loc='center right', bbox_to_anchor=(1.35, 0.5), ncol=2)
+        plt.legend(numpoints=1, loc='center right', bbox_to_anchor=(1.41, 0.5),
+                   ncol=2, prop={'size': 14})
 
-        plt.ylabel('TrueSkill value')
-        plt.xlabel('Average game duration in seconds')
+        plt.ylabel('TrueSkill value', fontsize=14)
+        plt.xlabel('Average game duration in seconds', fontsize=14)
 
-        plt.xticks(range(floor(min(x)), ceil(max(x)), 10))
+        plt.xticks(range(floor(min(x)), ceil(max(x)), 10), fontsize=12, rotation=60)
+        plt.yticks(fontsize=12)
 
         if __name__ == '__main__':
             plt.show()
