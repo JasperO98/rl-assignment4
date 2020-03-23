@@ -2,7 +2,6 @@ from hex.players.montecarlo import HexPlayerMonteCarloIterations
 import numpy as np
 from hex.tournament import HexTournament
 from itertools import combinations
-from math import logn
 
 
 def main():
