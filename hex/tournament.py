@@ -54,7 +54,7 @@ class HexTournament:
         y = ratings
         x = self.durations
 
-        m = ['x', 's', '*', 'p', 'D', '^', 'o']
+        m = ['x', 's', '*', '+', 'D', '^', 'o']
         for i in range(len(names)):
             plt.plot(x[i], y[i], linestyle='none', marker=m[int(i*0.1)], label=names[i])
 
