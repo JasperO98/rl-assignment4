@@ -46,7 +46,7 @@ class HexTournament:
         plt.show()
 
     def task4(self):
-        names = [str(player) for player in self.players]
+        names = [str(player)[1:].strip(')') for player in self.players]
         ratings = [rating.mu - 3 * rating.sigma for rating in self.ratings]
 
         plt.clf()
