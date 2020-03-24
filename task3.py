@@ -16,15 +16,17 @@ def bar_plot(ratings, names, plot_title=''):
     for i, v in enumerate(y):
         plt.text(xlocs[i] - 0.25, v + 0.01, str(round(v, 2)))
     plt.xticks(xlocs, x)
-    plt.show()
-
-#    plt.savefig('figures/ratings.pdf')
+#    plt.show()
+  #  plt.savefig('figures/ratings.pdf')
 
 if __name__ == '__main__':
     ht = HexTournament(4, (HexPlayerRandom(),
-                           HexPlayerRandom(),
-                           HexPlayerRandom()
-                           ))
+                           HexPlayerMonteCarloTime(10, 0.5),
+                           HexPlayerMonteCarloTime(10, 1.0),
+                           HexPlayerMonteCarloTime(10, 1.5),
+                           HexPlayerMonteCarloTime(10, 2.0),
+                           HexPlayerEnhancedAB(10, True),
+                           HexPlayerEnhancedAB(5, True)))
     print(ht.players)
     print(ht.ratings)
     print(ht.durations)

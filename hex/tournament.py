@@ -59,7 +59,7 @@ class HexTournament:
         plt.xlabel('Number of iterations')
         plt.title("Covergence of skill over iterations")
         plt.savefig('figures/VC_ratings.pdf')
-        plt.show()
+     #   plt.show()
 
     def bar_plot(self):
         plot_title = ""
@@ -74,8 +74,8 @@ class HexTournament:
             plt.xticks(xlocs, [str(player) for player in self.players])
         except IndexError:
             pass
-        plt.show()
-        #plt.savefig('figures/bar_ratings.pdf')
+        #plt.show()
+        plt.savefig('figures/bar_ratings.pdf')
 
     def task3(self):
         filename = "var.vc"
