@@ -39,10 +39,10 @@ def convergence():
 
 if __name__ == '__main__':
     ht = HexTournament(4, (HexPlayerRandom(),
-                           HexPlayerMonteCarloIterations(10, 0.5),
-                           HexPlayerMonteCarloIterations(10, 1.0),
-                           HexPlayerMonteCarloIterations(10, 1.5),
-                           HexPlayerMonteCarloIterations(10, 2.0),
+                           HexPlayerMonteCarloTime(10, 0.5),
+                           HexPlayerMonteCarloTime(10, 1.0),
+                           HexPlayerMonteCarloTime(10, 1.5),
+                           HexPlayerMonteCarloTime(10, 2.0),
                            HexPlayerEnhancedAB(15, True),
                            HexPlayerEnhancedAB(10, True),
                            HexPlayerEnhancedAB(5, True),
