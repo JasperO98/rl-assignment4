@@ -86,7 +86,7 @@ class HexTournament:
         self.bar_plot()
 
     def task4(self):
-        names = [str(player)[1:].strip(')') for player in self.players]
+        names = [str(player) for player in self.players]
         ratings = [rating.mu - 3 * rating.sigma for rating in self.ratings]
 
         plt.clf()
@@ -96,7 +96,7 @@ class HexTournament:
 
         m = ['x', 's', '*', '+', 'D', '^', 'o']
         for i in range(len(names)):
-            plt.plot(x[i], y[i], linestyle='none', marker=m[int(i*0.1)], label=names[i])
+            plt.plot(x[i], y[i], linestyle='none', marker=m[int(i*0.1)], label=names[i][5:])
 
         plt.subplots_adjust(left=0.05, right=0.7)
         plt.legend(numpoints=1, loc='center right', bbox_to_anchor=(1.45, 0.5), ncol=2, prop={'size': 16})
