@@ -21,7 +21,7 @@ class HexTournament:
         self.players = players
         self.durations = [0 for _ in range(len(players))]
         self.ratings = [TrueSkill(mu=25, sigma=8 + 1 / 3, draw_probability=0).create_rating() for _ in range(len(players))]
-        self.ratings_log = [[] for _ in range(len(players))]
+        self.ratings_log = [[0] for _ in range(len(players))]
 
     def _match_unpack(self, args):
         return self.match(*args)
@@ -43,9 +43,24 @@ class HexTournament:
                 self.durations[wi] += wd / sum(wi in match for match in matches)
                 self.durations[li] += ld / sum(li in match for match in matches)
 
-    def line_plot(self):
+    def convergence(self, file1, file2):
+        matches = list(permutations(range(len(self.players)), 2)) * 200
+        with Pool(cpu_count() - 1) as pool:
+            for wi, li, wd, ld in tqdm(iterable=pool.imap(self._match_unpack, matches), total=len(matches)):
+                self.ratings[wi], self.ratings[li] = rate_1vs1(self.ratings[wi], self.ratings[li])
+                self.ratings_log[wi].append(self.ratings[wi].mu - 3 * self.ratings[wi].sigma)
+                self.ratings_log[li].append(self.ratings[li].mu - 3 * self.ratings[li].sigma)
+                self.durations[wi] += wd / sum(wi in match for match in matches)
+                self.durations[li] += ld / sum(li in match for match in matches)
+        self.line_plot(7, 7, file1)
+        self.bar_plot(25,6, file2)
+
+
+    def line_plot(self,x, y, file="figures/VC_ratings.pdf"):
         colors =[k for k in mcolors.BASE_COLORS]
         colors.remove('w')
+        colors.extend(["darkblue","darkgreen","aquamarine", "fuchsia"])
+        plt.figure(figsize=(x,y))
         legend = []
         player = 1
         for i in range(len(self.ratings_log)):
@@ -56,17 +71,16 @@ class HexTournament:
             player += 1
         plt.legend(handles=legend)
         plt.ylabel('TrueSkill Value')
-        plt.xlabel('Number of iterations')
-        plt.title("Covergence of skill over iterations")
-        plt.savefig('figures/VC_ratings.pdf')
-     #   plt.show()
+        plt.xlabel('Number of games played')
+        plt.title("Covergence of trueskill value for each player")
+        plt.savefig(file)
+        plt.close()
 
-    def bar_plot(self):
-        plot_title = ""
-        plt.bar([str(player) for player in self.players],
+    def bar_plot(self, x, y, file='figures/bar_ratings.pdf'):
+        plt.figure(figsize=(x,y))
+        plt.bar([str(player).replace(",", "\n") for player in self.players],
                 [rating.mu - 3 * rating.sigma for rating in self.ratings])
-        plt.ylabel('TrueSkill value')
-        plt.title(plot_title)
+        plt.ylabel('TrueSkill Value')
         try:
             xlocs, xlabs = plt.xticks()
             for i, v in enumerate([rating.mu - 3 * rating.sigma for rating in self.ratings]):
@@ -74,16 +88,16 @@ class HexTournament:
             plt.xticks(xlocs, [str(player) for player in self.players])
         except IndexError:
             pass
-        #plt.show()
-        plt.savefig('figures/bar_ratings.pdf')
+        plt.savefig(file)
+        plt.close()
 
     def task3(self):
         filename = "var.vc"
         with open(filename, 'wb') as f:
             pickle.dump([[str(player) for player in self.players],
                          [rating.mu - 3 * rating.sigma for rating in self.ratings], self.ratings_log], f)
-        self.line_plot()
-        self.bar_plot()
+        self.line_plot(15, 10, 'figures/VC_ratings.pdf')
+        self.bar_plot(25,6, 'figures/bar_ratings.pdf')
 
     def task4(self):
         names = [str(player)[1:].strip(')') for player in self.players]
