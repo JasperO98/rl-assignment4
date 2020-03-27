@@ -6,7 +6,7 @@ if __name__ == '__main__':
     # test functionality
     game = HexGame(2, HexPlayerMonteCarloIterations(5, 1), HexPlayerRandom())
     game.step(['tree'])
-    game.step([])
+    game.step(['board'])
     game.step(['tree'])
 
     # play a game
