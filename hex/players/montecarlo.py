@@ -6,6 +6,7 @@ from math import sqrt, log
 from ctypes import c_int, sizeof
 from tqdm import trange
 from time import time
+from itertools import count
 
 
 class HexPlayerMonteCarloIterations(HexPlayer):
@@ -14,6 +15,7 @@ class HexPlayerMonteCarloIterations(HexPlayer):
         self.n = n
         self.cp = cp
         self.tree = ig.Graph(directed=True)
+        self.figure = count(1)
 
     def __str__(self):
         return 'MCTS\n(N=' + str(self.n) + ', Cₚ=' + str(self.cp) + ')'
@@ -29,6 +31,7 @@ class HexPlayerMonteCarloIterations(HexPlayer):
                 vertex_width=55,
                 vertex_height=22,
                 vertex_shape='rectangle',
+                target='figures/tree' + str(next(self.figure)) + '.pdf',
             )
 
     def uct_for_board(self, parent, board):
