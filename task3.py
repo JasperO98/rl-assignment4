@@ -52,15 +52,15 @@ if __name__ == '__main__':
     ht.task3()
     
     ht_convergence1 = HexTournament(4, (HexPlayerMonteCarloTime(10, 0.5),
-                                       HexPlayerEnhancedAB(10, True)))
-    ht_convergence1.convergence('figures/plot_MTCT0_5_IDTT_10.pdf',
-                                'figures/bar_MTCT0_5_IDTT_10.pdf')
+                                       HexPlayerEnhancedAB(15, True)))
+    ht_convergence1.convergence('figures/plot_MTCT0_5_IDTT_15.pdf',
+                                'figures/bar_MTCT0_5_IDTT_15.pdf')
     
     
-    ht_convergence2 = HexTournament(4, (HexPlayerEnhancedAB(5, True),
-                                       HexPlayerEnhancedAB(10, True)))
-    ht_convergence2.convergence('figures/plot_IDTT_5_IDTT_10.pdf',
-                                'figures/bar_IDTT_5_IDTT_10.pdf')
+    ht_convergence2 = HexTournament(4, (HexPlayerEnhancedAB(10, True),
+                                       HexPlayerEnhancedAB(15, True)))
+    ht_convergence2.convergence('figures/plot_IDTT_15_IDTT_10.pdf',
+                                'figures/bar_IDTT_15_IDTT_10.pdf')
     
         
     ht_convergence3 = HexTournament(4, (HexPlayerMonteCarloTime(10, 0.5),
