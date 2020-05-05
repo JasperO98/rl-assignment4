@@ -6,14 +6,12 @@ from tqdm import tqdm
 from itertools import permutations
 from hex.players.montecarlo import HexPlayerMonteCarloTime, HexPlayerMonteCarloIterations
 from trueskill import rate_1vs1, TrueSkill
-import matplotlib.pyplot as plt
-import seaborn as sns
 import csv
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.colors as mcolors
-import numpy as np
 import pickle
+
 
 class HexTournament:
     def __init__(self, size, players):
@@ -53,14 +51,13 @@ class HexTournament:
                 self.durations[wi] += wd / sum(wi in match for match in matches)
                 self.durations[li] += ld / sum(li in match for match in matches)
         self.line_plot(7, 7, file1)
-        self.bar_plot(25,6, file2)
+        self.bar_plot(25, 6, file2)
 
-
-    def line_plot(self,x, y, file="figures/VC_ratings.pdf"):
-        colors =[k for k in mcolors.BASE_COLORS]
+    def line_plot(self, x, y, file="figures/VC_ratings.pdf"):
+        colors = [k for k in mcolors.BASE_COLORS]
         colors.remove('w')
-        colors.extend(["darkblue","darkgreen","aquamarine", "fuchsia"])
-        plt.figure(figsize=(x,y))
+        colors.extend(["darkblue", "darkgreen", "aquamarine", "fuchsia"])
+        plt.figure(figsize=(x, y))
         legend = []
         player = 1
         for i in range(len(self.ratings_log)):
@@ -77,7 +74,7 @@ class HexTournament:
         plt.close()
 
     def bar_plot(self, x, y, file='figures/bar_ratings.pdf'):
-        plt.figure(figsize=(x,y))
+        plt.figure(figsize=(x, y))
         plt.bar([str(player).replace(",", "\n") for player in self.players],
                 [rating.mu - 3 * rating.sigma for rating in self.ratings])
         plt.ylabel('TrueSkill Value')
@@ -97,7 +94,7 @@ class HexTournament:
             pickle.dump([[str(player) for player in self.players],
                          [rating.mu - 3 * rating.sigma for rating in self.ratings], self.ratings_log], f)
         self.line_plot(15, 10, 'figures/VC_ratings.pdf')
-        self.bar_plot(25,6, 'figures/bar_ratings.pdf')
+        self.bar_plot(25, 6, 'figures/bar_ratings.pdf')
 
     def task4(self):
         names = [str(player) for player in self.players]
@@ -110,7 +107,7 @@ class HexTournament:
 
         m = ['X', 's', 'd', 'P', 'D', '^', 'o']
         for i in range(len(names)):
-            plt.plot(x[i], y[i], linestyle='none', marker=m[int(i*0.1)], label=names[i][5:])
+            plt.plot(x[i], y[i], linestyle='none', marker=m[int(i * 0.1)], label=names[i][5:])
 
         plt.subplots_adjust(left=0.05, right=0.7)
         plt.legend(numpoints=1, loc='center right', bbox_to_anchor=(1.45, 0.5), ncol=2, prop={'size': 16})
@@ -120,7 +117,6 @@ class HexTournament:
 
         plt.xticks(range(floor(min(x)), ceil(max(x)), 10), fontsize=16, rotation=60)
         plt.yticks(fontsize=16)
-
 
         if __name__ == '__main__':
             plt.show()
