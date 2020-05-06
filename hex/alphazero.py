@@ -58,8 +58,8 @@ class AlphaHexGame(Game):
 
 class AlphaHexNN(NeuralNet):
     def build_model(self):
-        input_boards = Input(shape=(self.size, self.size))
-        x_image = Reshape(target_shape=(self.size, self.size, 1))(input_boards)
+        input_boards = Input(shape=self.input)
+        x_image = Reshape(target_shape=self.input + (1,))(input_boards)
         h_conv1 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(self.num_channels, 3, padding='same', use_bias=False)(x_image)))
         h_conv2 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(self.num_channels, 3, padding='same', use_bias=False)(h_conv1)))
         h_conv3 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(self.num_channels, 3, padding='valid', use_bias=False)(h_conv2)))
@@ -67,16 +67,18 @@ class AlphaHexNN(NeuralNet):
         h_conv4_flat = Flatten()(h_conv4)
         s_fc1 = Dropout(self.dropout)(Activation('relu')(BatchNormalization(axis=1)(Dense(1024, use_bias=False)(h_conv4_flat))))
         s_fc2 = Dropout(self.dropout)(Activation('relu')(BatchNormalization(axis=1)(Dense(512, use_bias=False)(s_fc1))))
-        pi = Dense(self.size ** 2, activation='softmax', name='pi')(s_fc2)
+        pi = Dense(self.output, activation='softmax', name='pi')(s_fc2)
         v = Dense(1, activation='tanh', name='v')(s_fc2)
         model = Model(inputs=input_boards, outputs=[pi, v])
         model.compile(loss=['categorical_crossentropy', 'mean_squared_error'], optimizer=Adam(self.lr))
         return model
 
-    def __init__(self, size):
-        super().__init__(None)
+    def __init__(self, game):
+        super().__init__(game)
 
-        self.size = size
+        self.input = game.getBoardSize()
+        self.output = game.getActionSize()
+
         self.lr = 0.001
         self.dropout = 0.3
         self.epochs = 10

@@ -3,9 +3,6 @@ from hex.alphazero import AlphaHexGame, AlphaHexNN
 from alphazero.Coach import Coach
 import numpy as np
 import shutil
-from os.path import join, split, splitext
-from natsort import natsorted
-from glob import glob
 
 
 class CoachArgs:
@@ -19,12 +16,7 @@ class CoachArgs:
         self.numItersForTrainExamplesHistory = 20
         self.arenaCompare = 40
         self.updateThreshold = 0.6
-
         self.checkpoint = 'models/' + name
-        self.load_folder_file = (
-            self.checkpoint,
-            splitext(split(natsorted(glob(join(self.checkpoint, '*.examples')))[-1])[-1])[0],
-        )
 
 
 class AlphaZeroSelfPlay1(HexPlayer):
@@ -36,21 +28,15 @@ class AlphaZeroSelfPlay1(HexPlayer):
         self.net = None
 
     def setup(self, size):
-        self.net = AlphaHexNN(size)
+        game = AlphaHexGame(size)
+        self.net = AlphaHexNN(game)
 
-        if self.net.exists_checkpoint(self.args.checkpoint, 'best.pth.tar'):
-            self.net.load_checkpoint(self.args.checkpoint, 'best.pth.tar')
-            return
-
-        coach = Coach(AlphaHexGame(size), self.net, self.args)
-
-        if self.net.exists_checkpoint(self.args.checkpoint, 'temp.pth.tar'):
-            self.net.load_checkpoint(self.args.checkpoint, 'temp.pth.tar')
-            coach.loadTrainExamples()
-        else:
+        if not self.net.exists_checkpoint(self.args.checkpoint, 'best.pth.tar'):
             shutil.rmtree(path=self.args.checkpoint, ignore_errors=True)
+            coach = Coach(game, self.net, self.args)
+            coach.learn()
 
-        coach.learn()
+        self.net.load_checkpoint(self.args.checkpoint, 'best.pth.tar')
 
     def determine_move(self, board, renders):
         if self.net is None:
