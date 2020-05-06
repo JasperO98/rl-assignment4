@@ -2,6 +2,7 @@ from hex.players.base import HexPlayer
 from hex.alphazero import AlphaHexGame, AlphaHexNN
 from alphazero.Coach import Coach
 from alphazero.utils import dotdict
+import shutil
 
 
 class AlphaZeroSelfPlay(HexPlayer):
@@ -27,6 +28,8 @@ class AlphaZeroSelfPlay(HexPlayer):
         if self.net.exists_checkpoint(args.checkpoint, 'best.pth.tar'):
             self.net.load_checkpoint(args.checkpoint, 'best.pth.tar')
             coach.loadTrainExamples()
+        else:
+            shutil.rmtree(path=args.checkpoint, ignore_errors=True)
 
         coach.learn()
 
