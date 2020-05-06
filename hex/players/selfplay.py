@@ -6,7 +6,7 @@ import numpy as np
 
 class CoachArgs:
     def __init__(self, name):
-        self.numIters = 1000
+        self.numIters = 100
         self.maxlenOfQueue = 200000
         self.numEps = 100
         self.tempThreshold = 15
@@ -15,7 +15,20 @@ class CoachArgs:
         self.numItersForTrainExamplesHistory = 20
         self.arenaCompare = 40
         self.updateThreshold = 0.6
-        self.checkpoint = 'models/' + name
+        self.checkpoint = 'models/' + str(hash(self)) + '/' + name
+
+    def __hash__(self):
+        return hash((
+            self.numIters,
+            self.maxlenOfQueue,
+            self.numEps,
+            self.tempThreshold,
+            self.numMCTSSims,
+            self.cpuct,
+            self.numItersForTrainExamplesHistory,
+            self.arenaCompare,
+            self.updateThreshold,
+        ))
 
 
 class AlphaZeroSelfPlay1(HexPlayer):
