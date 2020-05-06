@@ -108,3 +108,7 @@ class AlphaHexNN(NeuralNet):
 
     def load_checkpoint(self, folder, filename):
         self.model.load_weights(os.path.join(folder, filename))
+
+    @staticmethod
+    def exists_checkpoint(folder, filename):
+        return os.path.exists(os.path.join(folder, filename))
