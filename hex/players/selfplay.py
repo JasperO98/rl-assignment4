@@ -19,6 +19,7 @@ class AlphaZeroSelfPlay(HexPlayer):
             'cpuct': 1,
             'numItersForTrainExamplesHistory': 20,
             'arenaCompare': 40,
+            'updateThreshold': 0.6,
             'checkpoint': 'models/player1',
         })
 
