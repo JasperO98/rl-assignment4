@@ -1,9 +1,8 @@
 import setup
-from hex.players.selfplay import AlphaZeroSelfPlay
-import numpy as np
-from hex.board import HexBoard
-
+from hex.game import HexGame
+from hex.players.base import HexPlayerHuman
+from hex.players.selfplay import AlphaZeroSelfPlay1
 
 if __name__ == '__main__':
-    AlphaZeroSelfPlay()
-    # AlphaZeroSelfPlay.determine_move(board)
+    game = HexGame(7, AlphaZeroSelfPlay1(), HexPlayerHuman())
+    game.play()

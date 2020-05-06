@@ -3,7 +3,6 @@ from alphazero.Game import Game
 import numpy as np
 from hex.colour import HexColour
 from alphazero.NeuralNet import NeuralNet
-from alphazero.utils import dotdict
 import os
 from keras.models import Model
 from keras.layers import Input, Reshape, Activation, Dropout, Flatten, Dense, Conv2D, BatchNormalization
@@ -58,43 +57,40 @@ class AlphaHexGame(Game):
 
 
 class AlphaHexNN(NeuralNet):
-    @staticmethod
-    def build_model(shape, n, args):
-        input_boards = Input(shape=shape)
-        x_image = Reshape(shape + (1,))(input_boards)
-        h_conv1 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(args.num_channels, 3, padding='same', use_bias=False)(x_image)))
-        h_conv2 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(args.num_channels, 3, padding='same', use_bias=False)(h_conv1)))
-        h_conv3 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(args.num_channels, 3, padding='valid', use_bias=False)(h_conv2)))
-        h_conv4 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(args.num_channels, 3, padding='valid', use_bias=False)(h_conv3)))
+    def build_model(self):
+        input_boards = Input(shape=(self.size, self.size))
+        x_image = Reshape(target_shape=(self.size, self.size, 1))(input_boards)
+        h_conv1 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(self.num_channels, 3, padding='same', use_bias=False)(x_image)))
+        h_conv2 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(self.num_channels, 3, padding='same', use_bias=False)(h_conv1)))
+        h_conv3 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(self.num_channels, 3, padding='valid', use_bias=False)(h_conv2)))
+        h_conv4 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(self.num_channels, 3, padding='valid', use_bias=False)(h_conv3)))
         h_conv4_flat = Flatten()(h_conv4)
-        s_fc1 = Dropout(args.dropout)(Activation('relu')(BatchNormalization(axis=1)(Dense(1024, use_bias=False)(h_conv4_flat))))
-        s_fc2 = Dropout(args.dropout)(Activation('relu')(BatchNormalization(axis=1)(Dense(512, use_bias=False)(s_fc1))))
-        pi = Dense(n, activation='softmax', name='pi')(s_fc2)
+        s_fc1 = Dropout(self.dropout)(Activation('relu')(BatchNormalization(axis=1)(Dense(1024, use_bias=False)(h_conv4_flat))))
+        s_fc2 = Dropout(self.dropout)(Activation('relu')(BatchNormalization(axis=1)(Dense(512, use_bias=False)(s_fc1))))
+        pi = Dense(self.size ** 2, activation='softmax', name='pi')(s_fc2)
         v = Dense(1, activation='tanh', name='v')(s_fc2)
         model = Model(inputs=input_boards, outputs=[pi, v])
-        model.compile(loss=['categorical_crossentropy', 'mean_squared_error'], optimizer=Adam(args.lr))
+        model.compile(loss=['categorical_crossentropy', 'mean_squared_error'], optimizer=Adam(self.lr))
         return model
 
-    def __init__(self, game):
-        super().__init__(game)
+    def __init__(self, size):
+        super().__init__(None)
 
-        self.args = dotdict({
-            'lr': 0.001,
-            'dropout': 0.3,
-            'epochs': 10,
-            'batch_size': 64,
-            'cuda': True,
-            'num_channels': 512,
-        })
+        self.size = size
+        self.lr = 0.001
+        self.dropout = 0.3
+        self.epochs = 10
+        self.batch_size = 64
+        self.num_channels = 512
 
-        self.model = self.build_model(game.getBoardSize(), game.getActionSize(), self.args)
+        self.model = self.build_model()
 
     def train(self, examples):
         input_boards, target_pis, target_vs = list(zip(*examples))
         input_boards = np.asarray(input_boards)
         target_pis = np.asarray(target_pis)
         target_vs = np.asarray(target_vs)
-        self.model.fit(x=input_boards, y=[target_pis, target_vs], batch_size=self.args.batch_size, epochs=self.args.epochs)
+        self.model.fit(x=input_boards, y=[target_pis, target_vs], batch_size=self.batch_size, epochs=self.epochs)
 
     def predict(self, board):
         board = board[np.newaxis, :, :]
