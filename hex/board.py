@@ -66,7 +66,7 @@ class HexBoard:
 
     def set_colour(self, coords, colour):
         for coord in coords:
-            self.board[coord] = colour
+            self.board[tuple(coord)] = colour
 
     def is_empty(self, coords):
         return coords not in self.board
