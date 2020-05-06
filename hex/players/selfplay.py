@@ -45,7 +45,7 @@ class AlphaZeroSelfPlay1(HexPlayer):
         self.net = AlphaHexNN(game)
 
         if not self.net.exists_checkpoint(self.args.checkpoint, 'best.pth.tar'):
-            shutil.rmtree(self.args.checkpoint, True)
+            shutil.rmtree(path=self.args.checkpoint, ignore_errors=True)
             coach = Coach(game, self.net, self.args)
             coach.learn()
 

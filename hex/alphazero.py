@@ -100,6 +100,7 @@ class AlphaHexNN(NeuralNet):
         return pi[0], v[0]
 
     def save_checkpoint(self, folder, filename):
+        os.makedirs(name=folder, exist_ok=True)
         self.model.save_weights(os.path.join(folder, filename))
 
     def load_checkpoint(self, folder, filename):
