@@ -19,6 +19,7 @@ class AlphaHexGame(Game):
         return self.size * self.size
 
     def getNextState(self, board, player, action):
+        board = deepcopy(board)
         board[divmod(action, self.size)] = player
         return board, -player
 
@@ -27,13 +28,14 @@ class AlphaHexGame(Game):
 
     def getGameEnded(self, board, player):
         hex_board = HexBoard(self.size)
-        hex_board.set_colour(np.argwhere(board == 1), HexColour.RED)
-        hex_board.set_colour(np.argwhere(board == -1), HexColour.BLUE)
+
+        hex_board.set_colour(np.argwhere(board == player), HexColour.RED)
+        hex_board.set_colour(np.argwhere(board == -player), HexColour.BLUE)
 
         if hex_board.check_win(HexColour.RED):
-            return 1
+            return player
         if hex_board.check_win(HexColour.BLUE):
-            return -1
+            return -player
         return 0
 
     def getCanonicalForm(self, board, player):
