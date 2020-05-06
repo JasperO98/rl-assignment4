@@ -20,9 +20,8 @@ class AlphaZeroSelfPlay(HexPlayer):
             'numMCTSSims': 25,
             'arenaCompare': 40,
             'cpuct': 1,
-            'checkpoint': './temp/',
+            'checkpoint': 'models/player1',
             'load_model': False,
-            'load_folder_file': ('/dev/models/8x100x50', 'best.pth.tar'),
             'numItersForTrainExamplesHistory': 20,
         }))
         coach.learn()

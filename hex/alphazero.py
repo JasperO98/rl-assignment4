@@ -60,9 +60,9 @@ class AlphaHexGame(Game):
 
 class AlphaHexNN(NeuralNet):
     @staticmethod
-    def build_model(x, y, n, args):
-        input_boards = Input(shape=(x, y))
-        x_image = Reshape((x, y, 1))(input_boards)
+    def build_model(shape, n, args):
+        input_boards = Input(shape=shape)
+        x_image = Reshape(shape + (1,))(input_boards)
         h_conv1 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(args.num_channels, 3, padding='same', use_bias=False)(x_image)))
         h_conv2 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(args.num_channels, 3, padding='same', use_bias=False)(h_conv1)))
         h_conv3 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(args.num_channels, 3, padding='valid', use_bias=False)(h_conv2)))
@@ -84,13 +84,11 @@ class AlphaHexNN(NeuralNet):
             'dropout': 0.3,
             'epochs': 10,
             'batch_size': 64,
-            'cuda': False,
+            'cuda': True,
             'num_channels': 512,
         })
 
-        self.board_x, self.board_y = game.getBoardSize()
-        self.action_size = game.getActionSize()
-        self.model = self.build_model(self.board_x, self.board_y, self.action_size, self.args)
+        self.model = self.build_model(game.getBoardSize(), game.getActionSize(), self.args)
 
     def train(self, examples):
         input_boards, target_pis, target_vs = list(zip(*examples))
@@ -104,14 +102,9 @@ class AlphaHexNN(NeuralNet):
         pi, v = self.model.predict(board)
         return pi[0], v[0]
 
-    def save_checkpoint(self, folder='checkpoint', filename='checkpoint.pth.tar'):
-        filepath = os.path.join(folder, filename)
-        if not os.path.exists(folder):
-            os.mkdir(folder)
-        self.model.save_weights(filepath)
+    def save_checkpoint(self, folder, filename):
+        os.makedirs(name=folder, exist_ok=True)
+        self.model.save_weights(os.path.join(folder, filename))
 
-    def load_checkpoint(self, folder='checkpoint', filename='checkpoint.pth.tar'):
-        filepath = os.path.join(folder, filename)
-        if not os.path.exists(filepath):
-            raise ('No model in path {}'.format(filepath))
-        self.model.load_weights(filepath)
+    def load_checkpoint(self, folder, filename):
+        self.model.load_weights(os.path.join(folder, filename))
