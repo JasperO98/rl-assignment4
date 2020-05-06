@@ -2,6 +2,7 @@ from hex.players.base import HexPlayer
 from hex.alphazero import AlphaHexGame, AlphaHexNN
 from alphazero.Coach import Coach
 from alphazero.utils import dotdict
+import numpy as np
 import shutil
 
 
@@ -34,7 +35,14 @@ class AlphaZeroSelfPlay(HexPlayer):
         coach.learn()
 
     def determine_move(self, board, renders):
-        pass
+        np_board = np.zeros((board.size, board.size))
+        for key, value in board.board.items():
+            if value == board.turn():
+                np_board[key] = 1
+            else:
+                np_board[key] = -1
+        action = int(np.argmax(self.net.model.predict(np_board) * np_board.flatten() == 0))
+        return divmod(action, board.size)
 
     def __str__(self):
         pass
