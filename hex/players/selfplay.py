@@ -2,7 +2,6 @@ from hex.players.base import HexPlayer
 from hex.alphazero import AlphaHexGame, AlphaHexNN
 from alphazero.Coach import Coach
 import numpy as np
-import shutil
 
 
 class CoachArgs:
@@ -32,7 +31,6 @@ class AlphaZeroSelfPlay1(HexPlayer):
         self.net = AlphaHexNN(game)
 
         if not self.net.exists_checkpoint(self.args.checkpoint, 'best.pth.tar'):
-            shutil.rmtree(self.args.checkpoint, True)
             coach = Coach(game, self.net, self.args)
             coach.learn()
 
