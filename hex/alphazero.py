@@ -8,7 +8,6 @@ import os
 from keras.models import Model
 from keras.layers import Input, Reshape, Activation, Dropout, Flatten, Dense, Conv2D, BatchNormalization
 from keras.optimizers import Adam
-from copy import deepcopy
 
 
 class AlphaHexGame(Game):
@@ -26,7 +25,7 @@ class AlphaHexGame(Game):
         return self.size * self.size
 
     def getNextState(self, board, player, action):
-        board = deepcopy(board)
+        board = board.copy()
         board[divmod(action, self.size)] = player
         return board, -player
 
