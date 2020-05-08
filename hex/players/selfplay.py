@@ -6,7 +6,7 @@ import shutil
 
 
 class CoachArgs:
-    def __init__(self, name):
+    def __init__(self):
         self.numIters = 100
         self.maxlenOfQueue = 200000
         self.numEps = 100
@@ -16,7 +16,10 @@ class CoachArgs:
         self.numItersForTrainExamplesHistory = 20
         self.arenaCompare = 40
         self.updateThreshold = 0.6
-        self.checkpoint = 'models/' + str(hash(self)) + '/' + name
+        self.checkpoint = None
+
+    def init(self, size, name):
+        self.checkpoint = 'models/' + str(size) + 'x' + str(size) + '/' + str(hash(self)) + '/' + name
 
     def __hash__(self):
         return hash((
@@ -37,10 +40,11 @@ class AlphaZeroSelfPlay1(HexPlayer):
 
     def __init__(self):
         super().__init__()
-        self.args = CoachArgs(self.NAME)
+        self.args = CoachArgs()
         self.net = None
 
     def setup(self, size):
+        self.args.init(size, self.NAME)
         game = AlphaHexGame(size)
         self.net = AlphaHexNN(game)
 
