@@ -29,10 +29,10 @@ class HexGame:
 
         if self.board.check_win(self.player1.colour):
             if 'win' in renders:
-                print(self.player1.colour + ' wins!')
+                print(str(self.player1.colour) + ' wins!')
             return self.player1, self.player2
 
         if self.board.check_win(self.player2.colour):
             if 'win' in renders:
-                print(self.player2.colour + ' wins!')
+                print(str(self.player2.colour) + ' wins!')
             return self.player2, self.player1
