@@ -33,15 +33,19 @@ class AlphaHexGame(Game):
         return board[:, :, 0].flatten() == 0
 
     def getGameEnded(self, board, player):
-        hex_board = HexBoard(self.size)
+        if np.sum(board[:, :, 0] == 1) == np.sum(board[:, :, 0] == -1):
+            red = player
+        else:
+            red = -player
 
-        hex_board.set_colour(np.argwhere(board[:, :, 0] == player), HexColour.RED)
-        hex_board.set_colour(np.argwhere(board[:, :, 0] == -player), HexColour.BLUE)
+        hex_board = HexBoard(self.size)
+        hex_board.set_colour(np.argwhere(board[:, :, 0] == red), HexColour.RED)
+        hex_board.set_colour(np.argwhere(board[:, :, 0] == -red), HexColour.BLUE)
 
         if hex_board.check_win(HexColour.RED):
-            return player
+            return red * player
         if hex_board.check_win(HexColour.BLUE):
-            return -player
+            return -red * player
         return 0
 
     def getCanonicalForm(self, board, player):
