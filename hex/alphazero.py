@@ -63,7 +63,7 @@ class AlphaHexNN(NeuralNet):
         layer = Reshape(self.input + (1,))(inputs)
         layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='same')(layer)))
 
-        for _ in range((min(self.input[(0, 1)]) - 1) // 2):
+        for _ in range((min(self.input[:2]) - 1) // 2):
             layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='valid')(layer)))
 
         layer = Flatten()(layer)
