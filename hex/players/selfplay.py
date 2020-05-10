@@ -18,6 +18,8 @@ class ArgsCoach:
         self.numItersForTrainExamplesHistory = 20
         self.arenaCompare = 40
         self.updateThreshold = 0.5
+        self.batch_size = 64
+        self.epochs = 10
         self.checkpoint = None
 
     def init(self, size, name):
@@ -34,6 +36,8 @@ class ArgsCoach:
             self.numItersForTrainExamplesHistory,
             self.arenaCompare,
             self.updateThreshold,
+            self.batch_size,
+            self.epochs,
         ))
 
 
@@ -55,7 +59,7 @@ class AlphaZeroSelfPlay1(HexPlayer):
     def setup(self, size):
         self.coach_args.init(size, self.NAME)
         game = AlphaHexGame(size)
-        net = AlphaHexNN(game)
+        net = AlphaHexNN(game, self.coach_args)
 
         if not net.exists_checkpoint(self.coach_args.checkpoint, 'best.pth.tar'):
             shutil.rmtree(self.coach_args.checkpoint, True)

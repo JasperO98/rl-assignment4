@@ -78,8 +78,9 @@ class AlphaHexNN(NeuralNet):
 
         return model
 
-    def __init__(self, game):
+    def __init__(self, game, args):
         super().__init__(game)
+        self.args = args
         self.input = game.getBoardSize()
         self.output = game.getActionSize()
         self.model = self.build_model()
@@ -89,7 +90,7 @@ class AlphaHexNN(NeuralNet):
         input_boards = np.asarray(input_boards)
         target_pis = np.asarray(target_pis)
         target_vs = np.asarray(target_vs)
-        self.model.fit(x=input_boards, y=[target_pis, target_vs], batch_size=64, epochs=10)
+        self.model.fit(x=input_boards, y=[target_pis, target_vs], batch_size=self.args.batch_size, epochs=self.args.epochs)
 
     def predict(self, board):
         board = board[np.newaxis, :, :]
