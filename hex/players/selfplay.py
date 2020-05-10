@@ -4,6 +4,7 @@ from alphazero.Coach import Coach
 import numpy as np
 import shutil
 from alphazero.MCTS import MCTS
+import numpy.random as npr
 
 
 class CoachArgs:
@@ -50,7 +51,7 @@ class AlphaZeroSelfPlay1(HexPlayer):
         self.args.init(size, self.NAME)
         self.game = AlphaHexGame(size)
         self.net = AlphaHexNN(self.game)
-        self.mcts = MCTS(self.game, self.net, self.args)  # For playing these args might change, not CoachArgs()
+        self.mcts = MCTS(self.game, self.net, self.args)
 
         if not self.net.exists_checkpoint(self.args.checkpoint, 'best.pth.tar'):
             shutil.rmtree(self.args.checkpoint, True)
@@ -60,7 +61,7 @@ class AlphaZeroSelfPlay1(HexPlayer):
         self.net.load_checkpoint(self.args.checkpoint, 'best.pth.tar')
 
     def determine_move(self, board, renders):
-        if self.net is None:
+        if self.mcts is None:
             self.setup(board.size)
 
         np_board = np.zeros((board.size, board.size))
@@ -69,13 +70,9 @@ class AlphaZeroSelfPlay1(HexPlayer):
                 np_board[key] = 1
             else:
                 np_board[key] = -1
-        
-        pi = self.mcts.getActionProb(np_board, temp=0)  # Activates MCTS
 
-        action = np.random.choice(len(pi), p=pi)
-        print(action)
-
-        # action = int(np.argmax(self.net.predict(np_board)[0] * (np_board.flatten() == 0)))
+        pi = self.mcts.getActionProb(np_board, temp=0)
+        action = npr.choice(len(pi), p=pi)
         return divmod(action, board.size)
 
     def __str__(self):
