@@ -37,13 +37,15 @@ class AlphaHexGame(Game):
             red = player
         else:
             red = -player
+        board_red = board[:, :, 0] == red
+        board_blue = board[:, :, 0] == -red
 
-        if not np.all(np.any(board[:, :, 0] == red, 1)) and not np.all(np.any(board[:, :, 0] == -red, 0)):
+        if not np.all(np.any(board_red, 1)) and not np.all(np.any(board_blue, 0)):
             return 0
 
         hex_board = HexBoard(self.size)
-        hex_board.set_colour(np.argwhere(board[:, :, 0] == red), HexColour.RED)
-        hex_board.set_colour(np.argwhere(board[:, :, 0] == -red), HexColour.BLUE)
+        hex_board.set_colour(np.argwhere(board_red), HexColour.RED)
+        hex_board.set_colour(np.argwhere(board_blue), HexColour.BLUE)
 
         if hex_board.check_win(HexColour.RED):
             return red * player
