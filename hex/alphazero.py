@@ -61,13 +61,14 @@ class AlphaHexNN(NeuralNet):
         inputs = Input(self.input)
 
         layer = Reshape(self.input + (1,))(inputs)
-        layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='same', use_bias=False)(layer)))
-        layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='same', use_bias=False)(layer)))
-        layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='valid', use_bias=False)(layer)))
-        layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='valid', use_bias=False)(layer)))
+        layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='same')(layer)))
+
+        for _ in range((min(self.input[(0, 1)]) - 1) // 2):
+            layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='valid')(layer)))
+
         layer = Flatten()(layer)
-        layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(units=1024, use_bias=False)(layer))))
-        layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(units=512, use_bias=False)(layer))))
+        layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(1024)(layer))))
+        layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(1024)(layer))))
 
         pi = Dense(units=self.output, activation='softmax', name='pi')(layer)
         v = Dense(units=1, activation='tanh', name='v')(layer)
