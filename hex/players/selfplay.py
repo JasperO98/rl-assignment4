@@ -58,8 +58,8 @@ class AlphaZeroSelfPlay1(HexPlayer):
 
     def setup(self, size):
         self.coach_args.init(size, self.NAME)
-        game = AlphaHexGame(size)
-        net = AlphaHexNN(game, self.coach_args)
+        game = AlphaHexGame(size, self.coach_args)
+        net = AlphaHexNN(game)
 
         if not net.exists_checkpoint(self.coach_args.checkpoint, 'best.pth.tar'):
             shutil.rmtree(self.coach_args.checkpoint, True)

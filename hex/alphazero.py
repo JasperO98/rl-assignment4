@@ -10,9 +10,10 @@ from keras.optimizers import Adam
 
 
 class AlphaHexGame(Game):
-    def __init__(self, size):
+    def __init__(self, size, args):
         super().__init__()
         self.size = size
+        self.args = args
 
     def getInitBoard(self):
         return np.zeros((self.size, self.size), int)
@@ -78,9 +79,9 @@ class AlphaHexNN(NeuralNet):
 
         return model
 
-    def __init__(self, game, args):
+    def __init__(self, game):
         super().__init__(game)
-        self.args = args
+        self.args = game.args
         self.input = game.getBoardSize()
         self.output = game.getActionSize()
         self.model = self.build_model()
