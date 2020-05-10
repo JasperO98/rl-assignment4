@@ -5,7 +5,7 @@ from hex.colour import HexColour
 from alphazero.NeuralNet import NeuralNet
 import os
 from keras.models import Model
-from keras.layers import Input, Reshape, Activation, Dropout, Flatten, Dense, Conv2D, BatchNormalization
+from keras.layers import Input, Reshape, Activation, Dropout, Flatten, Dense, Conv2D, BatchNormalization, Concatenate
 from keras.optimizers import Adam
 
 
@@ -59,15 +59,17 @@ class AlphaHexGame(Game):
 class AlphaHexNN(NeuralNet):
     def build_model(self):
         inputs = Input(self.input)
-
         layer = Reshape(self.input + (1,))(inputs)
-        layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='same')(layer)))
-        layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='same')(layer)))
-        layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='same')(layer)))
-        layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='same')(layer)))
-        layer = Flatten()(layer)
-        layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(1024)(layer))))
-        layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(512)(layer))))
+
+        path1 = Activation('relu')(BatchNormalization()(Conv2D(filters=256, kernel_size=5, padding='same')(layer)))
+        path1 = Activation('relu')(BatchNormalization()(Conv2D(filters=256, kernel_size=5, padding='same')(path1)))
+
+        path2 = Activation('relu')(BatchNormalization()(Conv2D(filters=256, kernel_size=3, padding='same')(layer)))
+        path2 = Activation('relu')(BatchNormalization()(Conv2D(filters=256, kernel_size=3, padding='same')(path2)))
+
+        layer = Concatenate()([Flatten()(path1), Flatten()(path2)])
+        layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(256)(layer))))
+        layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(256)(layer))))
 
         pi = Dense(units=self.output, activation='softmax', name='pi')(layer)
         v = Dense(units=1, activation='tanh', name='v')(layer)
