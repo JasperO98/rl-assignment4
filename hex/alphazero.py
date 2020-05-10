@@ -5,7 +5,7 @@ from hex.colour import HexColour
 from alphazero.NeuralNet import NeuralNet
 import os
 from keras.models import Model
-from keras.layers import Input, Reshape, Activation, Dropout, Flatten, Dense, Conv2D, BatchNormalization
+from keras.layers import Input, Activation, Dropout, Flatten, Dense, Conv2D, BatchNormalization
 from keras.optimizers import Adam
 
 
@@ -16,27 +16,27 @@ class AlphaHexGame(Game):
         self.args = args
 
     def getInitBoard(self):
-        return np.zeros((self.size, self.size), int)
+        return np.zeros((self.size, self.size, self.args.moves_in_state), int)
 
     def getBoardSize(self):
-        return self.size, self.size
+        return self.size, self.size, self.args.moves_in_state
 
     def getActionSize(self):
         return self.size * self.size
 
     def getNextState(self, board, player, action):
-        board = board.copy()
-        board[divmod(action, self.size)] = player
+        board = np.append(board[:, :, :1], board[:, :, :-1], 2)
+        board[divmod(action, self.size)][0] = player
         return board, -player
 
     def getValidMoves(self, board, player):
-        return board.flatten() == 0
+        return board[:, :, 0].flatten() == 0
 
     def getGameEnded(self, board, player):
         hex_board = HexBoard(self.size)
 
-        hex_board.set_colour(np.argwhere(board == player), HexColour.RED)
-        hex_board.set_colour(np.argwhere(board == -player), HexColour.BLUE)
+        hex_board.set_colour(np.argwhere(board[:, :, 0] == player), HexColour.RED)
+        hex_board.set_colour(np.argwhere(board[:, :, 0] == -player), HexColour.BLUE)
 
         if hex_board.check_win(HexColour.RED):
             return player
@@ -54,19 +54,16 @@ class AlphaHexGame(Game):
         )
 
     def stringRepresentation(self, board):
-        return board.tostring()
+        return board[:, :, 0].tostring()
 
 
 class AlphaHexNN(NeuralNet):
     def build_model(self):
         inputs = Input(self.input)
 
-        layer = Reshape(self.input + (1,))(inputs)
-        layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='same')(layer)))
-
+        layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='same')(inputs)))
         for _ in range((min(self.input[:2]) - 1) // 2):
             layer = Activation('relu')(BatchNormalization()(Conv2D(filters=512, kernel_size=3, padding='valid')(layer)))
-
         layer = Flatten()(layer)
         layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(1024)(layer))))
         layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(1024)(layer))))

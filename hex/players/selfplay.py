@@ -20,6 +20,7 @@ class ArgsCoach:
         self.updateThreshold = 0.5
         self.batch_size = 64
         self.epochs = 10
+        self.moves_in_state = 3
         self.checkpoint = None
 
     def init(self, size, name):
@@ -38,6 +39,7 @@ class ArgsCoach:
             self.updateThreshold,
             self.batch_size,
             self.epochs,
+            self.moves_in_state,
         ))
 
 
