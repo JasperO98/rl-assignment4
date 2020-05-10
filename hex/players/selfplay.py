@@ -75,9 +75,9 @@ class AlphaZeroSelfPlay1(HexPlayer):
         if self.mcts_class is None:
             self.setup(board.size)
 
-        np_board = np.zeros((board.size, board.size, 3), int)
+        np_board = np.zeros((board.size, board.size, self.coach_args.depth), int)
         for i, (x, y, color) in enumerate(board.history[::-1]):
-            z = range(min(3, i + 1))
+            z = range(min(self.coach_args.depth, i + 1))
             if color == board.turn():
                 np_board[x, y, z] = 1
             else:
