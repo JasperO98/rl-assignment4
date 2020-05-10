@@ -58,25 +58,19 @@ class AlphaHexGame(Game):
 
 class AlphaHexNN(NeuralNet):
     def build_model(self):
-        inputs = Input(self.input)
-        layer = Reshape(self.input + (1,))(inputs)
-
-        path1 = Activation('relu')(BatchNormalization()(Conv2D(filters=256, kernel_size=5, padding='same')(layer)))
-        path1 = Activation('relu')(BatchNormalization()(Conv2D(filters=256, kernel_size=5, padding='same')(path1)))
-
-        path2 = Activation('relu')(BatchNormalization()(Conv2D(filters=256, kernel_size=3, padding='same')(layer)))
-        path2 = Activation('relu')(BatchNormalization()(Conv2D(filters=256, kernel_size=3, padding='same')(path2)))
-
-        layer = Concatenate()([Flatten()(path1), Flatten()(path2)])
-        layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(256)(layer))))
-        layer = Dropout(0.3)(Activation('relu')(BatchNormalization()(Dense(256)(layer))))
-
-        pi = Dense(units=self.output, activation='softmax', name='pi')(layer)
-        v = Dense(units=1, activation='tanh', name='v')(layer)
-
-        model = Model(inputs=inputs, outputs=(pi, v))
-        model.compile(optimizer=Adam(), loss=('categorical_crossentropy', 'mean_squared_error'))
-
+        input_boards = Input(shape=self.input)
+        x_image = Reshape(target_shape=self.input + (1,))(input_boards)
+        h_conv1 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(512, 3, padding='same', use_bias=False)(x_image)))
+        h_conv2 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(512, 3, padding='same', use_bias=False)(h_conv1)))
+        h_conv3 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(512, 3, padding='valid', use_bias=False)(h_conv2)))
+        h_conv4 = Activation('relu')(BatchNormalization(axis=3)(Conv2D(512, 3, padding='valid', use_bias=False)(h_conv3)))
+        h_conv4_flat = Flatten()(h_conv4)
+        s_fc1 = Dropout(0.3)(Activation('relu')(BatchNormalization(axis=1)(Dense(1024, use_bias=False)(h_conv4_flat))))
+        s_fc2 = Dropout(0.3)(Activation('relu')(BatchNormalization(axis=1)(Dense(512, use_bias=False)(s_fc1))))
+        pi = Dense(self.output, activation='softmax', name='pi')(s_fc2)
+        v = Dense(1, activation='tanh', name='v')(s_fc2)
+        model = Model(inputs=input_boards, outputs=[pi, v])
+        model.compile(loss=['categorical_crossentropy', 'mean_squared_error'], optimizer=Adam())
         return model
 
     def __init__(self, game):

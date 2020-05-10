@@ -3,6 +3,7 @@ from hex.alphazero import AlphaHexGame, AlphaHexNN
 from alphazero.Coach import Coach
 import numpy as np
 import shutil
+from alphazero.MCTS import MCTS
 
 
 class CoachArgs:
@@ -11,11 +12,11 @@ class CoachArgs:
         self.maxlenOfQueue = 200000
         self.numEps = 100
         self.tempThreshold = 15
-        self.numMCTSSims = 25
+        self.numMCTSSims = 50
         self.cpuct = 1
         self.numItersForTrainExamplesHistory = 20
         self.arenaCompare = 40
-        self.updateThreshold = 0.6
+        self.updateThreshold = 0.5
         self.checkpoint = None
 
     def init(self, size, name):
@@ -42,15 +43,18 @@ class AlphaZeroSelfPlay1(HexPlayer):
         super().__init__()
         self.args = CoachArgs()
         self.net = None
+        self.game = None
+        self.mcts = None
 
     def setup(self, size):
         self.args.init(size, self.NAME)
-        game = AlphaHexGame(size)
-        self.net = AlphaHexNN(game)
+        self.game = AlphaHexGame(size)
+        self.net = AlphaHexNN(self.game)
+        self.mcts = MCTS(self.game, self.net, self.args)  # For playing these args might change, not CoachArgs()
 
         if not self.net.exists_checkpoint(self.args.checkpoint, 'best.pth.tar'):
             shutil.rmtree(self.args.checkpoint, True)
-            coach = Coach(game, self.net, self.args)
+            coach = Coach(self.game, self.net, self.args)
             coach.learn()
 
         self.net.load_checkpoint(self.args.checkpoint, 'best.pth.tar')
@@ -65,8 +69,13 @@ class AlphaZeroSelfPlay1(HexPlayer):
                 np_board[key] = 1
             else:
                 np_board[key] = -1
+        
+        pi = self.mcts.getActionProb(np_board, temp=0)  # Activates MCTS
 
-        action = int(np.argmax(self.net.predict(np_board)[0] * (np_board.flatten() == 0)))
+        action = np.random.choice(len(pi), p=pi)
+        print(action)
+
+        # action = int(np.argmax(self.net.predict(np_board)[0] * (np_board.flatten() == 0)))
         return divmod(action, board.size)
 
     def __str__(self):
