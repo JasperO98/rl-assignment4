@@ -9,14 +9,14 @@ import numpy.random as npr
 
 class ArgsCoach:
     def __init__(self):
-        self.numIters = 100
+        self.numIters = 1
         self.maxlenOfQueue = 200000
-        self.numEps = 100
+        self.numEps = 1
         self.tempThreshold = 15
         self.numMCTSSims = 50
         self.cpuct = 2
         self.numItersForTrainExamplesHistory = 20
-        self.arenaCompare = 40
+        self.arenaCompare = 4
         self.updateThreshold = 0.5
         self.batch_size = 64
         self.epochs = 10
@@ -75,12 +75,15 @@ class AlphaZeroSelfPlay1(HexPlayer):
         if self.mcts_class is None:
             self.setup(board.size)
 
-        np_board = np.zeros((board.size, board.size))
-        for key, value in board.board.items():
-            if value == board.turn():
-                np_board[key] = 1
+        np_board = np.zeros((board.size, board.size, self.coach_args.moves_in_state), int)
+        for i, (x, y, color) in enumerate(board.history):
+            if color == board.turn():
+                np_board[x, y] = [1] * self.coach_args.moves_in_state
             else:
-                np_board[key] = -1
+                np_board[x, y] = [-1] * self.coach_args.moves_in_state
+            # if i
+
+        print(np_board)
 
         pi = self.mcts_class.getActionProb(np_board, temp=0)
         action = npr.choice(len(pi), p=pi)
