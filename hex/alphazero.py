@@ -5,7 +5,7 @@ from hex.colour import HexColour
 from alphazero.NeuralNet import NeuralNet
 import os
 from keras.models import Model
-from keras.layers import Input, Reshape, Activation, Dropout, Flatten, Dense, Conv2D, BatchNormalization, Concatenate
+from keras.layers import Input, Reshape, Activation, Dropout, Flatten, Dense, Conv2D, BatchNormalization
 from keras.optimizers import Adam
 
 
