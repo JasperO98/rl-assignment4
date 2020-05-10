@@ -16,10 +16,10 @@ class AlphaHexGame(Game):
         self.args = args
 
     def getInitBoard(self):
-        return np.zeros((self.size, self.size, self.args.moves_in_state), int)
+        return np.zeros((self.size, self.size, self.args.depth), int)
 
     def getBoardSize(self):
-        return self.size, self.size, self.args.moves_in_state
+        return self.size, self.size, self.args.depth
 
     def getActionSize(self):
         return self.size * self.size

@@ -9,18 +9,18 @@ import numpy.random as npr
 
 class ArgsCoach:
     def __init__(self):
-        self.numIters = 1
+        self.numIters = 100
         self.maxlenOfQueue = 200000
-        self.numEps = 1
+        self.numEps = 100
         self.tempThreshold = 15
         self.numMCTSSims = 50
         self.cpuct = 2
         self.numItersForTrainExamplesHistory = 20
-        self.arenaCompare = 4
+        self.arenaCompare = 40
         self.updateThreshold = 0.5
         self.batch_size = 64
         self.epochs = 10
-        self.moves_in_state = 3
+        self.depth = 3
         self.checkpoint = None
 
     def init(self, size, name):
@@ -39,7 +39,7 @@ class ArgsCoach:
             self.updateThreshold,
             self.batch_size,
             self.epochs,
-            self.moves_in_state,
+            self.depth,
         ))
 
 
