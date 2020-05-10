@@ -38,6 +38,9 @@ class AlphaHexGame(Game):
         else:
             red = -player
 
+        if not np.all(np.any(board[:, :, 0] == red, 1)) and not np.all(np.any(board[:, :, 0] == -red, 0)):
+            return 0
+
         hex_board = HexBoard(self.size)
         hex_board.set_colour(np.argwhere(board[:, :, 0] == red), HexColour.RED)
         hex_board.set_colour(np.argwhere(board[:, :, 0] == -red), HexColour.BLUE)
