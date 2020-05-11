@@ -5,7 +5,7 @@ from copy import deepcopy
 
 class HexGame:
     def __init__(self, size, player1, player2):
-        assert size % 2 == 1
+        assert size >= 3 and size % 2 == 1
         self.board = HexBoard(size)
         self.player1 = deepcopy(player1)
         self.player1.colour = HexColour.RED
