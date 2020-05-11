@@ -8,7 +8,7 @@ import numpy.random as npr
 
 
 class ArgsCoach:
-    def __init__(self):
+    def __init__(self, epochs):
         self.numIters = 100
         self.maxlenOfQueue = 200000
         self.numEps = 100
@@ -19,7 +19,7 @@ class ArgsCoach:
         self.arenaCompare = 40
         self.updateThreshold = 0.5
         self.batch_size = 64
-        self.epochs = 10
+        self.epochs = epochs
         self.depth = 3
         self.checkpoint = None
 
@@ -52,9 +52,9 @@ class ArgsMCTS:
 class AlphaZeroSelfPlay1(HexPlayer):
     NAME = 'player1'
 
-    def __init__(self):
+    def __init__(self, epochs):
         super().__init__()
-        self.coach_args = ArgsCoach()
+        self.coach_args = ArgsCoach(epochs)
         self.mcts_args = ArgsMCTS()
         self.mcts_class = None
 
