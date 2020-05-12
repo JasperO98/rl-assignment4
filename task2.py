@@ -1,7 +1,7 @@
 import setup
 from hex.game import HexGame
-from hex.players.base import HexPlayerHuman, HexPlayerRandom
-from hex.players.selfplay import AlphaZeroSelfPlay1, ArgsCoach
+from hex.players.base import HexPlayerHuman
+from hex.players.selfplay import AlphaZeroSelfPlay1
 from hex.board import HexBoard
 from hex.alphazero import AlphaHexGame
 import numpy as np
@@ -44,5 +44,5 @@ if __name__ == '__main__':
 
     # train and play against AlphaZeroGeneral
     player = AlphaZeroSelfPlay1(epochs=10, cp=5)
-    HexGame(5, player, HexPlayerRandom()).step([])
     HexGame(5, player, HexPlayerHuman()).play()
+    HexGame(5, HexPlayerHuman(), player).play()
