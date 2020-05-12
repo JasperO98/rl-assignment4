@@ -29,6 +29,10 @@ if __name__ == '__main__':
     matrix = game.getCanonicalForm(matrix, -1)
     render(matrix)
 
+    # test game ended
+    print(game.getGameEnded(matrix, 1))
+    print(game.getGameEnded(matrix, -1))
+
     # train and play against AlphaZeroGeneral
     player = AlphaZeroSelfPlay1(epochs=10, cp=5)
     HexGame(5, player, HexPlayerRandom()).step([])

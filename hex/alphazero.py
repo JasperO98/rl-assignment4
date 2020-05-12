@@ -1,15 +1,16 @@
-from hex.board import HexBoard
 from alphazero.Game import Game
 import numpy as np
-from hex.colour import HexColour
 from alphazero.NeuralNet import NeuralNet
 import os
 from keras.models import Model
 from keras.layers import Input, Activation, Dropout, Flatten, Dense, Conv2D, BatchNormalization
 from keras.optimizers import Adam
+from scipy.ndimage.measurements import label
 
 
 class AlphaHexGame(Game):
+    CONNECTIVITY = ((0, 1, 1), (1, 1, 1), (1, 1, 0))
+
     def __init__(self, size, args):
         super().__init__()
         self.size = size
@@ -35,24 +36,14 @@ class AlphaHexGame(Game):
         return board[:, :, 0].flatten() == 0
 
     def getGameEnded(self, board, player):
-        if np.sum(board[:, :, 0] == 1) == np.sum(board[:, :, 0] == -1):
-            red = player
-        else:
-            red = -player
-        board_red = board[:, :, 0] == red
-        board_blue = board[:, :, 0] == -red
+        labeled = label(board[:, :, 0] == 1, self.CONNECTIVITY)[0]
+        if len(set(labeled[0]).intersection(set(labeled[-1]))) > 0:
+            return player
 
-        if not np.all(np.any(board_red, 1)) and not np.all(np.any(board_blue, 0)):
-            return 0
+        labeled = label(board[:, :, 0] == -1, self.CONNECTIVITY)[0]
+        if len(set(labeled[:, 0]).intersection(set(labeled[:, -1]))) > 0:
+            return -player
 
-        hex_board = HexBoard(self.size)
-        hex_board.set_colour(np.argwhere(board_red), HexColour.RED)
-        hex_board.set_colour(np.argwhere(board_blue), HexColour.BLUE)
-
-        if hex_board.check_win(HexColour.RED):
-            return red * player
-        if hex_board.check_win(HexColour.BLUE):
-            return -red * player
         return 0
 
     def getCanonicalForm(self, board, player):
