@@ -37,23 +37,21 @@ class AlphaHexGame(Game):
     def getGameEnded(self, board, player):
         tracking = board[:, :, 0] == 1
 
-        if np.all(np.any(tracking, 1)):
-            for i in range(1, self.size):
-                tracking[i] = np.logical_and(tracking[i], np.logical_or(tracking[i - 1], np.append(tracking[i - 1, 1:], [False])))
-                if not np.any(tracking[i]):
-                    break
-            else:
-                return player
+        for i in range(1, self.size):
+            tracking[i] = np.logical_and(tracking[i], np.logical_or(tracking[i - 1], np.append(tracking[i - 1, 1:], [False])))
+            if not np.any(tracking[i]):
+                break
+        else:
+            return player
 
         tracking = board[:, :, 0] == -1
 
-        if np.all(np.any(tracking, 0)):
-            for i in range(1, self.size):
-                tracking[:, i] = np.logical_and(tracking[:, i], np.logical_or(tracking[:, i - 1], np.append(tracking[1:, i - 1], [False])))
-                if not np.any(tracking[:, i]):
-                    break
-            else:
-                return -player
+        for i in range(1, self.size):
+            tracking[:, i] = np.logical_and(tracking[:, i], np.logical_or(tracking[:, i - 1], np.append(tracking[1:, i - 1], [False])))
+            if not np.any(tracking[:, i]):
+                break
+        else:
+            return -player
 
         return 0
 
