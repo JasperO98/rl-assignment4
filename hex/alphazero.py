@@ -35,24 +35,24 @@ class AlphaHexGame(Game):
         return board[:, :, 0].flatten() == 0
 
     def getGameEnded(self, board, player):
-        if np.sum(board[:, :, 0] == 1) == np.sum(board[:, :, 0] == -1):
-            red = player
+        tracking = board[:, :, 0] == 1
+
+        for i in range(1, self.size):
+            tracking[i] = np.logical_and(tracking[i], np.logical_or(tracking[i - 1], np.append(tracking[i - 1, 1:], [False])))
+            if not np.any(tracking[i]):
+                break
         else:
-            red = -player
-        board_red = board[:, :, 0] == red
-        board_blue = board[:, :, 0] == -red
+            return player
 
-        if not np.all(np.any(board_red, 1)) and not np.all(np.any(board_blue, 0)):
-            return 0
+        tracking = board[:, :, 0] == -1
 
-        hex_board = HexBoard(self.size)
-        hex_board.set_colour(np.argwhere(board_red), HexColour.RED)
-        hex_board.set_colour(np.argwhere(board_blue), HexColour.BLUE)
+        for i in range(1, self.size):
+            tracking[:, i] = np.logical_and(tracking[:, i], np.logical_or(tracking[:, i - 1], np.append(tracking[1:, i - 1], [False])))
+            if not np.any(tracking[:, i]):
+                break
+        else:
+            return -player
 
-        if hex_board.check_win(HexColour.RED):
-            return red * player
-        if hex_board.check_win(HexColour.BLUE):
-            return -red * player
         return 0
 
     def getCanonicalForm(self, board, player):
