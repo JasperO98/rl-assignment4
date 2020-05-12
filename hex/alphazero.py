@@ -38,13 +38,17 @@ class AlphaHexGame(Game):
         return board[:, :, 0].flatten() == 0
 
     def getGameEnded(self, board, player):
-        labeled = label(board[:, :, 0] == 1, self.CONNECTIVITY)[0]
-        if len(set(labeled[0]).difference([0]).intersection(labeled[-1])) > 0:
-            return player
+        labeled = board[:, :, 0] == 1
+        if np.all(np.any(labeled, 1)):
+            labeled = label(labeled, self.CONNECTIVITY)[0]
+            if len(set(labeled[0]).difference([0]).intersection(labeled[-1])) > 0:
+                return player
 
-        labeled = label(board[:, :, 0] == -1, self.CONNECTIVITY)[0]
-        if len(set(labeled[:, 0]).difference([0]).intersection(labeled[:, -1])) > 0:
-            return -player
+        labeled = board[:, :, 0] == -1
+        if np.all(np.any(labeled, 0)):
+            labeled = label(labeled, self.CONNECTIVITY)[0]
+            if len(set(labeled[:, 0]).difference([0]).intersection(labeled[:, -1])) > 0:
+                return -player
 
         return 0
 
