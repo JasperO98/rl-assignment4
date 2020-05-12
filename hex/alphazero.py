@@ -39,11 +39,11 @@ class AlphaHexGame(Game):
 
     def getGameEnded(self, board, player):
         labeled = label(board[:, :, 0] == 1, self.CONNECTIVITY)[0]
-        if len(set(labeled[0]).intersection(set(labeled[-1]))) > 0:
+        if len(set(labeled[0]).difference([0]).intersection(labeled[-1])) > 0:
             return player
 
         labeled = label(board[:, :, 0] == -1, self.CONNECTIVITY)[0]
-        if len(set(labeled[:, 0]).intersection(set(labeled[:, -1]))) > 0:
+        if len(set(labeled[:, 0]).difference([0]).intersection(labeled[:, -1])) > 0:
             return -player
 
         return 0
