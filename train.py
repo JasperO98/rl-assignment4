@@ -1,7 +1,7 @@
 import setup
-from hex.game import HexGame
-from hex.players.base import HexPlayerRandom
-from hex.players.selfplay import AlphaZeroSelfPlay1
+from hex.players.selfplay import AlphaZeroSelfPlay1, AlphaZeroSelfPlay2
 
 if __name__ == '__main__':
-    HexGame(5, AlphaZeroSelfPlay1(epochs=10, cp=5), HexPlayerRandom()).play(['win'])
+    settings = dict(epochs=10, cp=5)
+    AlphaZeroSelfPlay1(**settings).setup(5)
+    AlphaZeroSelfPlay2(**settings).setup(5)
