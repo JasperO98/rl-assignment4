@@ -11,7 +11,7 @@ class ArgsCoach:
     def __init__(self, epochs, cp):
         self.numIters = 100
         self.maxlenOfQueue = 200000
-        self.numEps = 100
+        self.numEps = 50
         self.tempThreshold = 15
         self.numMCTSSims = 50
         self.cpuct = cp

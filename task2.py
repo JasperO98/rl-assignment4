@@ -30,11 +30,13 @@ if __name__ == '__main__':
     render(matrix)
 
     # test symmetries
-    render(game.getSymmetries(matrix, [])[1][0])
+    matrix = game.getSymmetries(matrix, [])[1][0]
+    render(matrix)
+    matrix = game.getSymmetries(matrix, [])[1][0]
+    render(matrix)
 
     # test game ended
-    print(game.getGameEnded(matrix, 1))
-    print(game.getGameEnded(matrix, -1))
+    print(game.getGameEnded(matrix, 1), game.getGameEnded(matrix, -1))
 
     # test doing moves
     matrix = game.getNextState(matrix, -1, 22)[0]
