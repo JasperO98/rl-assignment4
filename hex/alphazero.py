@@ -27,6 +27,8 @@ class AlphaHexGame(Game):
 
     def getNextState(self, board, player, action):
         move = divmod(action, self.size)
+        if player == -1:
+            move = move[::-1]
         assert board[move][0] == 0
         board = np.append(board[:, :, :1], board[:, :, :-1], 2)
         board[move][0] = player

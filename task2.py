@@ -36,6 +36,10 @@ if __name__ == '__main__':
     print(game.getGameEnded(matrix, 1))
     print(game.getGameEnded(matrix, -1))
 
+    # test doing moves
+    matrix = game.getNextState(matrix, -1, 22)[0]
+    render(matrix)
+
     # train and play against AlphaZeroGeneral
     player = AlphaZeroSelfPlay1(epochs=10, cp=5)
     HexGame(5, player, HexPlayerRandom()).step([])
