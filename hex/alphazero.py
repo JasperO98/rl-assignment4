@@ -49,7 +49,6 @@ class AlphaHexGame(Game):
     def getCanonicalForm(self, board, player):
         if player == 1:
             return board
-
         return np.flip(np.rot90(-board), 0)
 
     def getSymmetries(self, board, pi):

@@ -19,8 +19,8 @@ if __name__ == '__main__':
     # test AlphaZeroGeneral interactions
     game = AlphaHexGame(5, None)
     matrix = np.zeros((5, 5, 1))
-    matrix[(0, 2, 4, 0, 1, 3, 4), (0, 2, 4, 2, 2, 2, 2), 0] = 1
-    matrix[(1, 3, 1, 3), (1, 3, 4, 0), 0] = -1
+    matrix[(0, 1, 2, 2, 3, 4), (1, 1, 1, 2, 2, 2), 0] = 1
+    matrix[(0, 4), (4, 4), 0] = -1
     render(matrix)
 
     # test canonical form
@@ -28,6 +28,9 @@ if __name__ == '__main__':
     render(matrix)
     matrix = game.getCanonicalForm(matrix, -1)
     render(matrix)
+
+    # test symmetries
+    render(game.getSymmetries(matrix, [])[1][0])
 
     # test game ended
     print(game.getGameEnded(matrix, 1))
