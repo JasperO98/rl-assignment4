@@ -6,6 +6,9 @@ import shutil
 from alphazero.MCTS import MCTS
 import numpy.random as npr
 from hex.colour import HexColour
+import os
+import json
+from copy import deepcopy
 
 
 class ArgsCoach:
@@ -24,8 +27,17 @@ class ArgsCoach:
         self.depth = 3
         self.checkpoint = None
 
+    def json(self):
+        data = deepcopy(self.__dict__)
+        del data['checkpoint']
+        return data
+
     def init(self, size, name):
         self.checkpoint = 'models/' + str(size) + 'x' + str(size) + '/' + str(hash(self)) + '/' + name
+        # save parameters as json
+        os.makedirs(name=self.checkpoint, exist_ok=True)
+        with open(os.path.join(self.checkpoint, 'parameters.json'), 'w') as fp:
+            json.dump(obj=self.json(), fp=fp, indent=2)
 
     def __hash__(self):
         return hash((

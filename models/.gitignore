@@ -1,2 +1,3 @@
 */*/*/*
 !*/*/*/best.pth.tar
+!*/*/*/parameters.json
