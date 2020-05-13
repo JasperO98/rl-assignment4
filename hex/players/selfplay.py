@@ -9,16 +9,16 @@ from hex.colour import HexColour
 
 
 class ArgsCoach:
-    def __init__(self, epochs, cp):
+    def __init__(self, epochs, cp, episodes, threshold):
         self.numIters = 100
         self.maxlenOfQueue = 200000
-        self.numEps = 50
+        self.numEps = episodes
         self.tempThreshold = 15
         self.numMCTSSims = 50
         self.cpuct = cp
         self.numItersForTrainExamplesHistory = 20
         self.arenaCompare = 40
-        self.updateThreshold = 0.5
+        self.updateThreshold = threshold
         self.batch_size = 64
         self.epochs = epochs
         self.depth = 3
@@ -53,9 +53,9 @@ class ArgsMCTS:
 class AlphaZeroSelfPlay1(HexPlayer):
     NAME = 'player1'
 
-    def __init__(self, epochs, cp):
+    def __init__(self, epochs, cp, episodes, threshold):
         super().__init__()
-        self.coach_args = ArgsCoach(epochs, cp)
+        self.coach_args = ArgsCoach(epochs, cp, episodes, threshold)
         self.mcts_args = ArgsMCTS()
         self.mcts_class = None
 
