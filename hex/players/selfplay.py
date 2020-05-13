@@ -103,7 +103,7 @@ class AlphaZeroSelfPlay1(HexPlayer):
         return self.mcts_class.game.actionToCoordinates(player, action)
 
     def __str__(self):
-        return 'AlphaZero Player ' + self.NAME[-1] + '\n(hash=' + str(hash(self.coach_args)) + ')'
+        return 'AlphaZero Player ' + self.NAME[-1] + '\n' + str(hash(self.coach_args))
 
 
 class AlphaZeroSelfPlay2(AlphaZeroSelfPlay1):
