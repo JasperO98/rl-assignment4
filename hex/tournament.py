@@ -8,6 +8,10 @@ from trueskill import Rating, rate_1vs1
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import tensorflow as tf
+
+# disable GPU usage during tournaments
+tf.config.set_visible_devices([], 'GPU')
 
 
 class HexTournament:
