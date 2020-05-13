@@ -25,10 +25,14 @@ class AlphaHexGame(Game):
     def getActionSize(self):
         return self.size * self.size
 
-    def getNextState(self, board, player, action):
+    def actionToCoordinates(self, player, action):
         move = divmod(action, self.size)
         if player == -1:
             move = move[::-1]
+        return move
+
+    def getNextState(self, board, player, action):
+        move = self.actionToCoordinates(player, action)
         assert board[move][0] == 0
         board = np.append(board[:, :, :1], board[:, :, :-1], 2)
         board[move][0] = player

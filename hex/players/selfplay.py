@@ -5,6 +5,7 @@ import numpy as np
 import shutil
 from alphazero.MCTS import MCTS
 import numpy.random as npr
+from hex.colour import HexColour
 
 
 class ArgsCoach:
@@ -74,18 +75,20 @@ class AlphaZeroSelfPlay1(HexPlayer):
     def determine_move(self, board, renders):
         if self.mcts_class is None:
             self.setup(board.size)
+        player = 1 if self.colour == HexColour.RED else -1
 
         np_board = np.zeros((board.size, board.size, self.coach_args.depth), int)
         for i, (x, y, color) in enumerate(board.history[::-1]):
             z = range(min(self.coach_args.depth, i + 1))
-            if color == board.turn():
+            if color == HexColour.RED:
                 np_board[x, y, z] = 1
             else:
                 np_board[x, y, z] = -1
+        np_board = self.mcts_class.game.getCanonicalForm(np_board, player)
 
-        pi = self.mcts_class.getActionProb(np_board, temp=0)
-        action = npr.choice(len(pi), p=pi)
-        return divmod(action, board.size)
+        pi = self.mcts_class.getActionProb(np_board, 0)
+        action = npr.choice(a=len(pi), p=pi)
+        return self.mcts_class.game.actionToCoordinates(player, action)
 
     def __str__(self):
         return 'AlphaZero Player ' + self.NAME[-1]
