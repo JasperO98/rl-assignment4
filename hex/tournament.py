@@ -4,7 +4,6 @@ from hex.colour import HexColour
 from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
 from itertools import permutations
-from hex.players.montecarlo import HexPlayerMonteCarloTime, HexPlayerMonteCarloIterations
 from trueskill import rate_1vs1, TrueSkill
 
 
