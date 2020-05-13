@@ -1,9 +1,8 @@
 import setup
 from hex.game import HexGame
 from hex.players.base import HexPlayerHuman
-from hex.players.selfplay import AlphaZeroSelfPlay1
+from hex.players.selfplay import AlphaZeroSelfPlay1, AlphaHexGame
 from hex.board import HexBoard
-from hex.alphazero import AlphaHexGame
 import numpy as np
 from hex.colour import HexColour
 
