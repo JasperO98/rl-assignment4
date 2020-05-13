@@ -4,21 +4,19 @@ from hex.colour import HexColour
 from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
 from itertools import permutations
-from trueskill import rate_1vs1, TrueSkill
+from trueskill import Rating, rate_1vs1
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from hex.players.montecarlo import HexPlayerMonteCarloTime
 
 
 class HexTournament:
     def __init__(self, size, players):
         self.size = size
         self.players = players
-        self.durations = [0 for _ in range(len(players))]
-        self.ratings = [TrueSkill(mu=25, sigma=8 + 1 / 3, draw_probability=0).create_rating() for _ in range(len(players))]
-        self.history = [[] for _ in range(len(players))]
-        for i in range(len(players)):
-            self._add_to_history(i)
-
-    def _add_to_history(self, index):
-        self.history[index].append(self.ratings[index].mu - 3 * self.ratings[index].sigma)
+        self.durations = np.zeros(len(players), float)
+        self.ratings = [Rating() for _ in range(len(players))]
 
     def _match_unpack(self, args):
         return self.match(*args)
@@ -37,5 +35,21 @@ class HexTournament:
                 self.ratings[wi], self.ratings[li] = rate_1vs1(self.ratings[wi], self.ratings[li])
                 self.durations[wi] += wd / sum(wi in match for match in matches)
                 self.durations[li] += ld / sum(li in match for match in matches)
-                self._add_to_history(wi)
-                self._add_to_history(li)
+
+    def plot_elo(self):
+        sns.barplot(
+            x=[str(player) for player in self.players],
+            y=[rating.mu for rating in self.ratings],
+            ci=[rating.sigma for rating in self.ratings],
+        )
+        plt.show()
+
+
+if __name__ == '__main__':
+    ht = HexTournament(3, (
+        HexPlayerMonteCarloTime(2, 1),
+        HexPlayerMonteCarloTime(2, 2),
+    ))
+    ht.tournament()
+    ht.plot_elo()
+    print(ht.ratings)
