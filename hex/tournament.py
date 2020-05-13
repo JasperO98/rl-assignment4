@@ -8,7 +8,6 @@ from trueskill import Rating, rate_1vs1
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from hex.players.montecarlo import HexPlayerMonteCarloTime
 
 
 class HexTournament:
@@ -47,13 +46,3 @@ class HexTournament:
             ci=[rating[-1].sigma for rating in self.ratings],
         )
         plt.show()
-
-
-if __name__ == '__main__':
-    ht = HexTournament(3, (
-        HexPlayerMonteCarloTime(2, 1),
-        HexPlayerMonteCarloTime(2, 2),
-    ))
-    ht.tournament()
-    ht.plot_elo()
-    print(ht.ratings)
