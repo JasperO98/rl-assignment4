@@ -6,6 +6,7 @@ from keras.models import Model
 from keras.layers import Input, Activation, Dropout, Flatten, Dense, Conv2D, BatchNormalization
 from keras.optimizers import Adam
 from scipy.ndimage.measurements import label
+import json
 
 
 class AlphaHexGame(Game):
@@ -110,7 +111,13 @@ class AlphaHexNN(NeuralNet):
         return pi[0], v[0]
 
     def save_checkpoint(self, folder, filename):
+        # ensure data folder exists
+        os.makedirs(name=folder, exist_ok=True)
+        # save model checkpoints
         self.model.save_weights(os.path.join(folder, filename))
+        # save model parameters
+        with open(os.path.join(folder, 'parameters.json'), 'w') as fp:
+            json.dump(obj=self.args.json(), fp=fp, indent=2)
 
     def load_checkpoint(self, folder, filename):
         self.model.load_weights(os.path.join(folder, filename))
