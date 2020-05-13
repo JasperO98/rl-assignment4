@@ -88,7 +88,7 @@ class AlphaZeroSelfPlay1(HexPlayer):
         return divmod(action, board.size)
 
     def __str__(self):
-        pass
+        return 'AlphaZero Player ' + self.NAME[-1]
 
 
 class AlphaZeroSelfPlay2(AlphaZeroSelfPlay1):
