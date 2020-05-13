@@ -16,7 +16,7 @@ class HexTournament:
         self.size = size
         self.players = players
         self.durations = np.zeros(len(players), float)
-        self.ratings = [Rating() for _ in range(len(players))]
+        self.ratings = [[Rating()] for _ in range(len(players))]
 
     def _match_unpack(self, args):
         return self.match(*args)
@@ -32,15 +32,19 @@ class HexTournament:
         matches = list(permutations(range(len(self.players)), 2)) * ceil(2 * log(len(self.players), 2))
         with Pool(cpu_count() - 1) as pool:
             for wi, li, wd, ld in tqdm(iterable=pool.imap(self._match_unpack, matches), total=len(matches)):
-                self.ratings[wi], self.ratings[li] = rate_1vs1(self.ratings[wi], self.ratings[li])
+                # update ratings
+                wr, lr = rate_1vs1(self.ratings[wi][-1], self.ratings[li][-1])
+                self.ratings[wi].append(wr)
+                self.ratings[li].append(lr)
+                # update durations
                 self.durations[wi] += wd / sum(wi in match for match in matches)
                 self.durations[li] += ld / sum(li in match for match in matches)
 
     def plot_elo(self):
         sns.barplot(
             x=[str(player) for player in self.players],
-            y=[rating.mu for rating in self.ratings],
-            ci=[rating.sigma for rating in self.ratings],
+            y=[rating[-1].mu for rating in self.ratings],
+            ci=[rating[-1].sigma for rating in self.ratings],
         )
         plt.show()
 
