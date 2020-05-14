@@ -204,16 +204,15 @@ class AlphaZeroSelfPlay1(HexPlayer):
     def determine_move(self, board, renders):
         if self.mcts_class is None:
             self.setup(board.size)
-        player = 1 if self.colour == HexColour.RED else -1
 
         np_board = np.zeros((board.size, board.size, self.coach_args.depth), int)
         for i, (x, y, colour) in enumerate(board.history[::-1]):
             np_board[x, y, range(min(self.coach_args.depth, i + 1))] = int(colour)
-        np_board = self.mcts_class.game.getCanonicalForm(np_board, player)
+        np_board = self.mcts_class.game.getCanonicalForm(np_board, int(self.colour))
 
         pi = self.mcts_class.getActionProb(np_board, 0)
         action = npr.choice(a=len(pi), p=pi)
-        return self.mcts_class.game.actionToCoordinates(player, action)
+        return self.mcts_class.game.actionToCoordinates(int(self.colour), action)
 
     def __str__(self):
         return 'AlphaZero Player ' + self.NAME[-1] + '\n' + str(hash(self.coach_args))
