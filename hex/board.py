@@ -9,7 +9,6 @@ from hex.players.base import HexPlayer
 class HexBoard:
     def __init__(self, size):
         self.board = {}
-        self.history = []
         self.size = size
 
     def __hash__(self):
@@ -63,7 +62,6 @@ class HexBoard:
 
     def do_move(self, coords):
         assert self.exists(coords) and self.is_empty(coords)
-        self.history.append(list(coords) + [self.turn()])
         self.board[coords] = self.turn()
 
     def set_colour(self, coords, colour):

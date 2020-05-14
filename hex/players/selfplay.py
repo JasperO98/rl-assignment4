@@ -206,8 +206,9 @@ class AlphaZeroSelfPlay1(HexPlayer):
             self.setup(board.size)
 
         np_board = np.zeros((board.size, board.size, self.coach_args.depth), int)
-        for i, (x, y, colour) in enumerate(board.history[::-1]):
-            np_board[x, y, range(min(self.coach_args.depth, i + 1))] = int(colour)
+        for i, ((x, y), colour) in enumerate(board.board.items()):
+            z = range(min(self.coach_args.depth, len(board.board) - i))
+            np_board[x, y, z] = int(colour)
         np_board = self.mcts_class.game.getCanonicalForm(np_board, int(self.colour))
 
         pi = self.mcts_class.getActionProb(np_board, 0)
