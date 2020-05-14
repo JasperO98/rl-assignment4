@@ -40,10 +40,8 @@ class AlphaHexGame(Game):
         return move
 
     def getNextState(self, board, player, action):
-        move = self.actionToCoordinates(player, action)
-        assert board[move][0] == 0
         board = np.append(board[:, :, :1], board[:, :, :-1], 2)
-        board[move][0] = player
+        board[self.actionToCoordinates(player, action)][0] = player
         return board, -player
 
     def getValidMoves(self, board, player):
