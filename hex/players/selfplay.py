@@ -4,7 +4,6 @@ import numpy as np
 import shutil
 from alphazero.MCTS import MCTS
 import numpy.random as npr
-from hex.colour import HexColour
 from copy import deepcopy
 from alphazero.Game import Game
 from alphazero.NeuralNet import NeuralNet
