@@ -13,4 +13,4 @@ if __name__ == '__main__':
         HexPlayerMonteCarloTime(10, 1),
     ))
     ht.tournament()
-    ht.plot_elo()
+    ht.plots()
