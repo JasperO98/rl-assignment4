@@ -8,6 +8,7 @@ from trueskill import Rating, rate_1vs1
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
+from matplotlib.cm import ScalarMappable
 
 # disable GPU usage during tournaments
 tf.config.set_visible_devices([], 'GPU')
@@ -42,22 +43,18 @@ class HexTournament:
                 self.durations[wi] += wd / sum(wi in match for match in matches)
                 self.durations[li] += ld / sum(li in match for match in matches)
 
-    @staticmethod
-    def _normalize(array, invert):
-        array -= np.min(array)
-        array /= np.max(array)
-        return 1 - array if invert else array
-
     def plots(self):
+        mapper = ScalarMappable(cmap='Greys')
         plt.bar(
             x=[str(player) for player in self.players],
             height=[ratings[-1].mu for ratings in self.ratings],
             yerr=[ratings[-1].sigma for ratings in self.ratings],
-            color=[(d, d, d) for d in self._normalize(self.durations, True)],
+            color=mapper.to_rgba(self.durations),
             edgecolor='black',
             ecolor='red',
             capsize=10,
         )
+        plt.colorbar(mapper)
         plt.show()
 
         for player, ratings in zip(self.players, self.ratings):
