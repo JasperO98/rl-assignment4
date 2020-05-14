@@ -54,7 +54,7 @@ class HexTournament:
             height=[ratings[-1].mu for ratings in self.ratings],
             yerr=[ratings[-1].sigma for ratings in self.ratings],
             color=[(d, d, d) for d in self._normalize(self.durations, True)],
-            edgecolor=[(d, d, d) for d in self._normalize(self.durations, False)],
+            edgecolor='black',
             ecolor='red',
             capsize=10,
         )
