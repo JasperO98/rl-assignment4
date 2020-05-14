@@ -103,16 +103,17 @@ class AlphaHexNN(NeuralNet):
         self.model = self.build_model()
 
     def train(self, examples):
-        input_boards, target_pis, target_vs = list(zip(*examples))
-        input_boards = np.asarray(input_boards)
-        target_pis = np.asarray(target_pis)
-        target_vs = np.asarray(target_vs)
-        self.model.fit(x=input_boards, y=[target_pis, target_vs], batch_size=self.args.batch_size, epochs=self.args.epochs)
+        boards, pis, vs = list(zip(*examples))
+        self.model.fit(
+            x=np.array(boards),
+            y=[np.array(pis), np.array(vs)],
+            batch_size=self.args.batch_size,
+            epochs=self.args.epochs,
+        )
 
     def predict(self, board):
-        board = board[np.newaxis, :, :]
-        pi, v = self.model.predict(board)
-        return pi[0], v[0]
+        pis, vs = self.model.predict(np.expand_dims(board, 0))
+        return pis[0], vs[0]
 
     def save_checkpoint(self, folder, filename):
         # ensure data folder exists
