@@ -22,7 +22,7 @@ class HexBoard:
         nodes = {}
         for i in range(self.size):
             for j in range(self.size):
-                if not self.is_colour((i, j), colour.invert()):
+                if not self.is_colour((i, j), -colour):
                     if (colour == HexColour.RED and i == 0) or (colour == HexColour.BLUE and j == 0):
                         nodes[i, j] = 0 if self.is_colour((i, j), colour) else 1
                     else:
