@@ -6,7 +6,7 @@ from random import choice
 
 class HexPlayer(ABC):
     def __init__(self):
-        self.active = 0
+        self.active = []
         self.colour = None
 
     def __repr__(self):
@@ -15,7 +15,7 @@ class HexPlayer(ABC):
     def get_move(self, board, renders):
         start = time()
         move = self.determine_move(board, renders)
-        self.active += time() - start
+        self.active.append(time() - start)
         return move
 
     @abstractmethod

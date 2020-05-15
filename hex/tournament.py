@@ -27,9 +27,9 @@ class HexTournament:
     def match(self, pi1, pi2):
         winner, loser = HexGame(self.size, self.players[pi1], self.players[pi2]).play([])
         if winner.colour == HexColour.RED:
-            return pi1, pi2, winner.active, loser.active
+            return pi1, pi2, np.mean(winner.active), np.mean(loser.active)
         if winner.colour == HexColour.BLUE:
-            return pi2, pi1, winner.active, loser.active
+            return pi2, pi1, np.mean(winner.active), np.mean(loser.active)
 
     def tournament(self):
         matches = list(permutations(range(len(self.players)), 2)) * ceil(2 * log(len(self.players), 2))
