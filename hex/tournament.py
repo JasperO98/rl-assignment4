@@ -51,6 +51,7 @@ class HexTournament:
         plt.close()
 
     def plots(self):
+        plt.figure(figsize=(16, 8))
         mapper = ScalarMappable(cmap='Greys')
         plt.bar(
             x=[str(player) for player in self.players],
@@ -59,11 +60,12 @@ class HexTournament:
             color=mapper.to_rgba(self.durations),
             edgecolor='black',
             ecolor='red',
-            capsize=10,
+            capsize=20,
         )
         plt.colorbar(mapper).set_label('seconds per turn')
         self._save_plot('tournament_ratings')
 
+        plt.figure(figsize=(16, 8))
         for player, ratings in zip(self.players, self.ratings):
             x = range(len(ratings))
             plt.plot(
