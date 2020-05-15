@@ -1,4 +1,3 @@
-from math import log, ceil
 from hex.game import HexGame
 from hex.colour import HexColour
 from multiprocessing import Pool, cpu_count
@@ -12,6 +11,7 @@ from matplotlib.cm import ScalarMappable
 from os.path import join
 from hex.players.base import HexPlayerHuman
 import cv2 as cv
+import numpy.random as npr
 
 # disable GPU usage during tournaments
 tf.config.set_visible_devices([], 'GPU')
@@ -58,7 +58,7 @@ class HexTournament:
                 yield match
 
     def _matches_computer(self):
-        for _ in range(ceil(2 * log(len(self.computers), 2))):
+        for _ in range(10):
             for match in permutations(self.computers, 2):
                 yield match
 
@@ -73,7 +73,7 @@ class HexTournament:
 
     def tournament(self):
         # matches involving at least one human
-        matches = list(self._matches_human())
+        matches = npr.permutation(list(self._matches_human()))
         for i, (pi1, pi2) in enumerate(matches, 1):
             print('Game ' + str(i) + ' out of ' + str(len(matches)) + '.')
             wi, li, wd, ld = self.match(pi1, pi2, True)
@@ -81,12 +81,9 @@ class HexTournament:
         cv.destroyAllWindows()
 
         # matches between computers only
-        matches = list(self._matches_computer())
+        matches = np.insert(npr.permutation(list(self._matches_computer())), 2, False, 1)
         with Pool(cpu_count() - 1) as pool:
-            for wi, li, wd, ld in tqdm(
-                    iterable=pool.imap(self._match_unpack, [(pi1, pi2, False) for pi1, pi2 in matches]),
-                    total=len(matches),
-            ):
+            for wi, li, wd, ld in tqdm(iterable=pool.imap(self._match_unpack, matches), total=len(matches)):
                 self._update_after_match(wi, li, wd, ld)
 
     @staticmethod
