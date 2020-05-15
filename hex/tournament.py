@@ -58,7 +58,7 @@ class HexTournament:
                 yield match
 
     def _matches_computer(self):
-        for _ in range(10):
+        for _ in range(8):
             for match in permutations(self.computers, 2):
                 yield match
 
