@@ -125,3 +125,16 @@ class HexTournament:
             )
         plt.legend()
         self._save_plot('tournament_convergence')
+
+        plt.figure(figsize=(16, 8))
+        for player, ratings, durations in zip(self.players, self.ratings, self.durations):
+            plt.errorbar(
+                y=ratings[-1].mu,
+                yerr=ratings[-1].sigma,
+                x=np.mean(durations),
+                xerr=np.std(durations),
+                fmt='o',
+                label=str(player),
+            )
+        plt.legend()
+        self._save_plot('tournament_tradeoff')
