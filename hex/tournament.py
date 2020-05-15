@@ -21,7 +21,7 @@ class HexTournament:
     def __init__(self, size, players):
         self.size = size
         self.players = players
-        self.durations = np.zeros(len(players), float)
+        self.durations = [[] for _ in range(len(players))]
         self.ratings = [[Rating()] for _ in range(len(players))]
 
         self.humans = []
@@ -44,9 +44,9 @@ class HexTournament:
             winner, loser = game.play([])
 
         if winner.colour == HexColour.RED:
-            return pi1, pi2, np.mean(winner.active), np.mean(loser.active)
+            return pi1, pi2, winner.active, loser.active
         if winner.colour == HexColour.BLUE:
-            return pi2, pi1, np.mean(winner.active), np.mean(loser.active)
+            return pi2, pi1, winner.active, loser.active
 
     def _matches_human(self):
         for _ in range(2):
@@ -62,14 +62,14 @@ class HexTournament:
             for match in permutations(self.computers, 2):
                 yield match
 
-    def _update_after_match(self, wi, li, wd, ld, matches):
+    def _update_after_match(self, wi, li, wd, ld):
         # update ratings
         wr, lr = rate_1vs1(self.ratings[wi][-1], self.ratings[li][-1])
         self.ratings[wi].append(wr)
         self.ratings[li].append(lr)
         # update durations
-        self.durations[wi] += wd / sum(wi in match for match in matches)
-        self.durations[li] += ld / sum(li in match for match in matches)
+        self.durations[wi] += wd
+        self.durations[li] += ld
 
     def tournament(self):
         # matches involving at least one human
@@ -77,7 +77,7 @@ class HexTournament:
         for i, (pi1, pi2) in enumerate(matches, 1):
             print('Game ' + str(i) + ' out of ' + str(len(matches)) + '.')
             wi, li, wd, ld = self.match(pi1, pi2, True)
-            self._update_after_match(wi, li, wd, ld, matches)
+            self._update_after_match(wi, li, wd, ld)
         cv.destroyAllWindows()
 
         # matches between computers only
@@ -87,7 +87,7 @@ class HexTournament:
                     iterable=pool.imap(self._match_unpack, [(pi1, pi2, False) for pi1, pi2 in matches]),
                     total=len(matches),
             ):
-                self._update_after_match(wi, li, wd, ld, matches)
+                self._update_after_match(wi, li, wd, ld)
 
     @staticmethod
     def _save_plot(name):
@@ -102,7 +102,7 @@ class HexTournament:
             x=[str(player) for player in self.players],
             height=[ratings[-1].mu for ratings in self.ratings],
             yerr=[ratings[-1].sigma for ratings in self.ratings],
-            color=mapper.to_rgba(self.durations),
+            color=mapper.to_rgba([np.mean(durations) for durations in self.durations]),
             edgecolor='black',
             ecolor='red',
             capsize=20,
