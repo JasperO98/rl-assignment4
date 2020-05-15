@@ -86,7 +86,7 @@ class HexPlayerRandomAB(HexPlayer):
             if board.turn() == self.colour and bound > lower:
                 lower = bound
                 best = move
-            if board.turn() == self.colour.invert() and bound < upper:
+            if board.turn() == -self.colour and bound < upper:
                 upper = bound
                 best = move
 
@@ -116,7 +116,7 @@ class HexPlayerRandomAB(HexPlayer):
 
 class HexPlayerDijkstraAB(HexPlayerRandomAB):
     def eval(self, board):
-        return board.dijkstra(self.colour.invert()) - board.dijkstra(self.colour)
+        return board.dijkstra(-self.colour) - board.dijkstra(self.colour)
 
     def __str__(self):
         return 'AB Dijkstra\n(depth ' + str(self.depth) + ')'

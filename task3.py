@@ -9,7 +9,9 @@ if __name__ == '__main__':
         HexPlayerRandom(),
         AlphaZeroSelfPlay1(epochs=10, cp=5, episodes=50, threshold=0.5),
         AlphaZeroSelfPlay1(epochs=10, cp=5, episodes=100, threshold=0.51),
+        AlphaZeroSelfPlay1(epochs=1, cp=5, episodes=50, threshold=0.5),
         HexPlayerMonteCarloTime(10, 1),
+        HexPlayerMonteCarloTime(30, 1),
     ))
     ht.tournament()
-    ht.plot_elo()
+    ht.plots()

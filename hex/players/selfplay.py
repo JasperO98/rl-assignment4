@@ -4,7 +4,6 @@ import numpy as np
 import shutil
 from alphazero.MCTS import MCTS
 import numpy.random as npr
-from hex.colour import HexColour
 from copy import deepcopy
 from alphazero.Game import Game
 from alphazero.NeuralNet import NeuralNet
@@ -40,10 +39,8 @@ class AlphaHexGame(Game):
         return move
 
     def getNextState(self, board, player, action):
-        move = self.actionToCoordinates(player, action)
-        assert board[move][0] == 0
         board = np.append(board[:, :, :1], board[:, :, :-1], 2)
-        board[move][0] = player
+        board[self.actionToCoordinates(player, action)][0] = player
         return board, -player
 
     def getValidMoves(self, board, player):
@@ -106,16 +103,17 @@ class AlphaHexNN(NeuralNet):
         self.model = self.build_model()
 
     def train(self, examples):
-        input_boards, target_pis, target_vs = list(zip(*examples))
-        input_boards = np.asarray(input_boards)
-        target_pis = np.asarray(target_pis)
-        target_vs = np.asarray(target_vs)
-        self.model.fit(x=input_boards, y=[target_pis, target_vs], batch_size=self.args.batch_size, epochs=self.args.epochs)
+        boards, pis, vs = list(zip(*examples))
+        self.model.fit(
+            x=np.array(boards),
+            y=[np.array(pis), np.array(vs)],
+            batch_size=self.args.batch_size,
+            epochs=self.args.epochs,
+        )
 
     def predict(self, board):
-        board = board[np.newaxis, :, :]
-        pi, v = self.model.predict(board)
-        return pi[0], v[0]
+        pis, vs = self.model.predict(np.expand_dims(board, 0))
+        return pis[0], vs[0]
 
     def save_checkpoint(self, folder, filename):
         # ensure data folder exists
@@ -206,20 +204,16 @@ class AlphaZeroSelfPlay1(HexPlayer):
     def determine_move(self, board, renders):
         if self.mcts_class is None:
             self.setup(board.size)
-        player = 1 if self.colour == HexColour.RED else -1
 
         np_board = np.zeros((board.size, board.size, self.coach_args.depth), int)
-        for i, (x, y, color) in enumerate(board.history[::-1]):
-            z = range(min(self.coach_args.depth, i + 1))
-            if color == HexColour.RED:
-                np_board[x, y, z] = 1
-            else:
-                np_board[x, y, z] = -1
-        np_board = self.mcts_class.game.getCanonicalForm(np_board, player)
+        for i, ((x, y), colour) in enumerate(board.board.items()):
+            z = range(min(self.coach_args.depth, len(board.board) - i))
+            np_board[x, y, z] = int(colour)
+        np_board = self.mcts_class.game.getCanonicalForm(np_board, int(self.colour))
 
         pi = self.mcts_class.getActionProb(np_board, 0)
         action = npr.choice(a=len(pi), p=pi)
-        return self.mcts_class.game.actionToCoordinates(player, action)
+        return self.mcts_class.game.actionToCoordinates(int(self.colour), action)
 
     def __str__(self):
         return 'AlphaZero Player ' + self.NAME[-1] + '\n' + str(hash(self.coach_args))

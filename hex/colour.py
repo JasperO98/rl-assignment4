@@ -5,7 +5,7 @@ class HexColour(Enum):
     RED = auto()
     BLUE = auto()
 
-    def invert(self):
+    def __neg__(self):
         if self == HexColour.RED:
             return HexColour.BLUE
         if self == HexColour.BLUE:
@@ -16,3 +16,9 @@ class HexColour(Enum):
             return 'RED'
         if self == HexColour.BLUE:
             return 'BLUE'
+
+    def __int__(self):
+        if self == HexColour.RED:
+            return 1
+        if self == HexColour.BLUE:
+            return -1
