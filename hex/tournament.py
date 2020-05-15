@@ -61,7 +61,7 @@ class HexTournament:
             ecolor='red',
             capsize=10,
         )
-        plt.colorbar(mapper)
+        plt.colorbar(mapper).set_label('seconds per turn')
         self._save_plot('tournament_ratings')
 
         for player, ratings in zip(self.players, self.ratings):
