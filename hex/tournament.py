@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from matplotlib.cm import ScalarMappable
+from os.path import join
 
 # disable GPU usage during tournaments
 tf.config.set_visible_devices([], 'GPU')
@@ -43,6 +44,12 @@ class HexTournament:
                 self.durations[wi] += wd / sum(wi in match for match in matches)
                 self.durations[li] += ld / sum(li in match for match in matches)
 
+    @staticmethod
+    def _save_plot(name):
+        plt.tight_layout()
+        plt.savefig(join('figures', name + '.pdf'))
+        plt.close()
+
     def plots(self):
         mapper = ScalarMappable(cmap='Greys')
         plt.bar(
@@ -55,7 +62,7 @@ class HexTournament:
             capsize=10,
         )
         plt.colorbar(mapper)
-        plt.show()
+        self._save_plot('tournament_ratings')
 
         for player, ratings in zip(self.players, self.ratings):
             x = range(len(ratings))
@@ -70,4 +77,4 @@ class HexTournament:
                 alpha=0.5,
             )
         plt.legend()
-        plt.show()
+        self._save_plot('tournament_convergence')
