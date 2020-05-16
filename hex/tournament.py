@@ -94,8 +94,7 @@ class HexTournament:
 
     def train(self):
         with Pool(cpu_count() - 1) as pool:
-            for _ in tqdm(iterable=pool.imap(self._train, self.computers), total=len(self.computers)):
-                pass
+            pool.map(self._train, self.computers)
 
     @staticmethod
     def _save_plot(name):
