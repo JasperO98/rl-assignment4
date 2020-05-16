@@ -175,14 +175,14 @@ class ArgsCoach:
 
 class ArgsMCTS:
     def __init__(self):
-        self.numMCTSSims = 100
+        self.numMCTSSims = 1000
         self.cpuct = 1
 
 
 class AlphaZeroSelfPlay1(HexPlayer):
     NAME = 'player1'
 
-    def __init__(self, epochs=10, cp=5, episodes=100, threshold=0.51):
+    def __init__(self, epochs=10, cp=5, episodes=50, threshold=0.51):
         super().__init__()
         self.coach_args = ArgsCoach(epochs, cp, episodes, threshold)
         self.mcts_args = ArgsMCTS()
