@@ -182,7 +182,7 @@ class ArgsMCTS:
 class AlphaZeroSelfPlay1(HexPlayer):
     NAME = 'player1'
 
-    def __init__(self, epochs, cp, episodes, threshold):
+    def __init__(self, epochs=10, cp=5, episodes=100, threshold=0.51):
         super().__init__()
         self.coach_args = ArgsCoach(epochs, cp, episodes, threshold)
         self.mcts_args = ArgsMCTS()

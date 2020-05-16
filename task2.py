@@ -42,6 +42,6 @@ if __name__ == '__main__':
     render(matrix)
 
     # train and play against AlphaZeroGeneral
-    player = AlphaZeroSelfPlay1(epochs=10, cp=5, episodes=50, threshold=0.5)
+    player = AlphaZeroSelfPlay1()
     HexGame(5, player, HexPlayerHuman()).play()
     HexGame(5, HexPlayerHuman(), player).play()
