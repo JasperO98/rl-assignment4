@@ -86,6 +86,17 @@ class HexTournament:
             for wi, li, wd, ld in tqdm(iterable=pool.imap(self._match_unpack, matches), total=len(matches)):
                 self._update_after_match(wi, li, wd, ld)
 
+    def _train(self, pi):
+        try:
+            self.players[pi].setup(self.size)
+        except (AttributeError, TypeError):
+            pass
+
+    def train(self):
+        with Pool(cpu_count() - 1) as pool:
+            for _ in tqdm(iterable=pool.imap(self._train, self.computers), total=len(self.computers)):
+                pass
+
     @staticmethod
     def _save_plot(name):
         plt.tight_layout()
