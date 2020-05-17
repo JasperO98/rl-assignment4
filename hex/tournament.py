@@ -82,7 +82,7 @@ class HexTournament:
 
         # matches between computers only
         matches = np.insert(npr.permutation(list(self._matches_computer())), 2, False, 1)
-        with Pool(cpu_count() - 1) as pool:
+        with self._make_pool(matches) as pool:
             for wi, li, wd, ld in tqdm(iterable=pool.imap(self._match_unpack, matches), total=len(matches)):
                 self._update_after_match(wi, li, wd, ld)
 
@@ -93,8 +93,12 @@ class HexTournament:
             pass
 
     def train(self):
-        with Pool(cpu_count() - 1) as pool:
+        with self._make_pool(self.computers) as pool:
             pool.map(self._train, self.computers)
+
+    @staticmethod
+    def _make_pool(iterable):
+        return Pool(min(cpu_count() - 1, len(iterable)))
 
     @staticmethod
     def _save_plot(name):
