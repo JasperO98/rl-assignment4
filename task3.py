@@ -9,9 +9,9 @@ def irange(start, stop):
 
 if __name__ == '__main__':
     players = []
-    for i in irange(1, 20):
+    for i in irange(1, 10):
         players.append(AlphaZeroSelfPlay1())
-        players[-1].coach_args.cpuct = i
+        players[-1].coach_args.depth = i
 
     ht = HexTournament(5, players)
     ht.train()
