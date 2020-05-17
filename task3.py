@@ -3,8 +3,8 @@ from hex.tournament import HexTournament
 from hex.players.selfplay import AlphaZeroSelfPlay1
 
 
-def irange(start, stop):
-    return range(start, stop + 1)
+def irange(start, stop, step=1):
+    return range(start, stop + 1, step)
 
 
 if __name__ == '__main__':
