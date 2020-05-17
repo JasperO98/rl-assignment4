@@ -134,10 +134,10 @@ class AlphaHexNN(NeuralNet):
 
 class ArgsCoach:
     def __init__(self, depth):
+        # static parameters
         self.numIters = 50
         self.maxlenOfQueue = 200000
         self.numEps = 50
-        self.tempThreshold = 15
         self.numMCTSSims = 100
         self.cpuct = 5
         self.numItersForTrainExamplesHistory = 20
@@ -145,7 +145,10 @@ class ArgsCoach:
         self.updateThreshold = 0.51
         self.batch_size = 64
         self.epochs = 10
+        # dynamic parameters
         self.depth = depth
+        # parameters depending on board size
+        self.tempThreshold = None
         self.checkpoint = None
 
     def json(self):
@@ -154,6 +157,7 @@ class ArgsCoach:
         return data
 
     def init(self, size, name):
+        self.tempThreshold = size * 2 - 1
         self.checkpoint = 'models/' + str(size) + 'x' + str(size) + '/' + str(hash(self)) + '/' + name
 
     def __hash__(self):
