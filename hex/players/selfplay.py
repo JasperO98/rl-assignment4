@@ -133,8 +133,7 @@ class AlphaHexNN(NeuralNet):
 
 
 class ArgsCoach:
-    def __init__(self, depth):
-        # static parameters
+    def __init__(self, epochs):
         self.numIters = 50
         self.maxlenOfQueue = 200000
         self.numEps = 50
@@ -144,9 +143,8 @@ class ArgsCoach:
         self.arenaCompare = 20
         self.updateThreshold = 0.51
         self.batch_size = 64
-        self.epochs = 10
-        # dynamic parameters
-        self.depth = depth
+        self.epochs = epochs
+        self.depth = 3
         # parameters depending on board size
         self.tempThreshold = None
         self.checkpoint = None
@@ -186,9 +184,9 @@ class ArgsMCTS:
 class AlphaZeroSelfPlay1(HexPlayer):
     NAME = 'player1'
 
-    def __init__(self, depth):
+    def __init__(self, epochs):
         super().__init__()
-        self.coach_args = ArgsCoach(depth)
+        self.coach_args = ArgsCoach(epochs)
         self.mcts_args = ArgsMCTS()
         self.mcts_class = None
 
