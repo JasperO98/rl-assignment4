@@ -102,7 +102,6 @@ class HexPlayerRandomAB(HexPlayer):
             width=55,
             height=22,
             shape='rectangle',
-
         )
         for vertex in vertices:
             self.tree_cur.add_edge(parent, vertex[0], label=vertex[1])
