@@ -13,6 +13,8 @@ from keras.layers import Input, Activation, Dropout, Flatten, Dense, Conv2D, Bat
 from keras.optimizers import Adam
 from scipy.ndimage.measurements import label
 import json
+from subprocess import run
+from filelock import FileLock
 
 
 class AlphaHexGame(Game):
@@ -204,6 +206,16 @@ class AlphaZeroSelfPlay1(HexPlayer):
             shutil.rmtree(self.coach_args.checkpoint, True)
             coach = Coach(game, net, self.coach_args)
             coach.learn()
+
+            with FileLock('.gitlocked'):
+                run(('git', 'add', os.path.join(self.coach_args.checkpoint, 'best.pth.tar')))
+                run(('git', 'add', os.path.join(self.coach_args.checkpoint, 'parameters.json')))
+                run((
+                    'git', 'commit', '-m',
+                    'add trained model (' + str(size) + 'x' + str(size) + ', ' + self.NAME + ', ' + str(hash(self.coach_args)) + ')',
+                ))
+                run(('git', 'pull'))
+                run(('git', 'push'))
 
         net.load_checkpoint(self.coach_args.checkpoint, 'best.pth.tar')
         self.mcts_class = MCTS(game, net, self.mcts_args)
