@@ -145,7 +145,7 @@ class ArgsCoach:
         self.updateThreshold = 0.51
         # parameters for NN training
         self.maxlenOfQueue = None
-        self.numItersForTrainExamplesHistory = self.numIters // 10
+        self.numItersForTrainExamplesHistory = max(1, self.numIters // 10)
         self.batch_size = 64
         self.epochs = 10
         # board shape parameters
