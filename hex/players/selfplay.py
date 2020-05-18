@@ -168,7 +168,6 @@ class ArgsCoach:
     def __hash__(self):
         return hash((
             self.numIters,
-            self.maxlenOfQueue,
             self.numEps,
             self.tempThreshold,
             self.numMCTSSims,
