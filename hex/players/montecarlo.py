@@ -50,11 +50,16 @@ class HexPlayerMonteCarloIterations(HexPlayer):
                 return False
 
         children = npr.permutation([child[0] for child in board.children()])
-        data = np.array(list(map(self.cache.get, children))).T
-        good = data[1] != 0
-        uct = np.ones(len(children)) * np.inf
-        uct[good] = data[0, good] / data[1, good] + self.cp * np.sqrt(np.log(cached[1] - 1) / data[1, good])
-        won = self.walk(children[np.argmax(uct)])
+
+        if cached[1] == 1:
+            won = self.walk(children[0])
+
+        else:
+            data = np.array(list(map(self.cache.get, children))).T
+            good = data[1] != 0
+            uct = np.ones(len(children)) * np.inf
+            uct[good] = data[0, good] / data[1, good] + self.cp * np.sqrt(np.log(cached[1] - 1) / data[1, good])
+            won = self.walk(children[np.argmax(uct)])
 
         if won:
             cached[0] += 1
