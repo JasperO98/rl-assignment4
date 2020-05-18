@@ -135,7 +135,8 @@ class AlphaHexNN(NeuralNet):
 
 
 class ArgsCoach:
-    def __init__(self):
+    def __init__(self, hashed):
+        self.hashed = hashed
         # iteration parameters
         self.numIters = 50
         self.numEps = 50
@@ -166,6 +167,9 @@ class ArgsCoach:
         self.checkpoint = 'models/' + str(size) + 'x' + str(size) + '/' + str(hash(self)) + '/' + name
 
     def __hash__(self):
+        if self.hashed:
+            return self.hashed
+
         return hash((
             self.numIters,
             self.numEps,
@@ -190,9 +194,9 @@ class ArgsMCTS:
 class AlphaZeroSelfPlay1(HexPlayer):
     NAME = 'player1'
 
-    def __init__(self):
+    def __init__(self, hashed=False):
         super().__init__()
-        self.coach_args = ArgsCoach()
+        self.coach_args = ArgsCoach(hashed)
         self.mcts_args = ArgsMCTS()
         self.mcts_class = None
 
