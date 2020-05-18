@@ -217,7 +217,7 @@ class AlphaZeroSelfPlay1(HexPlayer):
                     'git', 'commit', '-m',
                     'add trained model (' + str(size) + 'x' + str(size) + ', ' + self.NAME + ', ' + str(hash(self.coach_args)) + ')',
                 ))
-                run(('git', 'pull'))
+                run(('git', 'pull', '--no-edit'))
                 run(('git', 'push'))
 
         net.load_checkpoint(self.coach_args.checkpoint, 'best.pth.tar')
