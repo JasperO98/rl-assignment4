@@ -103,7 +103,7 @@ class HexTournament:
 
     @staticmethod
     def _make_pool(iterable):
-        return Pool(min(cpu_count() - 1, len(iterable)))
+        return Pool(min(cpu_count() - 1, len(iterable), 12))
 
     @staticmethod
     def _save_plot(name):
