@@ -12,6 +12,7 @@ from os.path import join
 from hex.players.base import HexPlayerHuman
 import cv2 as cv
 import numpy.random as npr
+import pickle
 
 # disable GPU usage during tournaments
 tf.config.set_visible_devices([], 'GPU')
@@ -85,6 +86,10 @@ class HexTournament:
         with self._make_pool(matches) as pool:
             for wi, li, wd, ld in tqdm(iterable=pool.imap(self._match_unpack, matches), total=len(matches)):
                 self._update_after_match(wi, li, wd, ld)
+
+        # save raw tournament results
+        with open(join('figures', 'raw.pickle'), 'wb') as fp:
+            pickle.dump(self, fp)
 
     def _train(self, pi):
         try:
