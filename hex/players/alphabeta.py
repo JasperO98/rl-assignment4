@@ -6,11 +6,42 @@ from random import randint
 from hex.players.base import HexPlayer
 
 
+class TranspositionTable:
+    def __init__(self, enabled):
+        self.prev = {}
+        self.cur = {}
+        self.enabled = enabled
+
+    def rotate(self):
+        self.prev = self.cur
+        self.cur = {}
+
+    def set(self, board, value):
+        self.cur[hash(board)] = value
+
+    def get_for_cache(self, board):
+        if not self.enabled:
+            return False, None
+
+        board = hash(board)
+        if board not in self.cur:
+            return False, None
+        return True, self.cur[board]
+
+    def get_for_ordering(self, child):
+        if not self.enabled:
+            return 0
+
+        child = hash(child[0])
+        if child not in self.prev:
+            return 0
+        return self.prev[child]
+
+
 class HexPlayerRandomAB(HexPlayer):
     def __init__(self, depth):
         super().__init__()
-        self.tt_cur = None
-        self.tt_prev = None
+        self.tt = None
         self.depth = depth
         self.use_tt = False
 
@@ -21,23 +52,19 @@ class HexPlayerRandomAB(HexPlayer):
         return randint(-9, 9)
 
     def determine_move(self, board, renders):
-        self.tt_cur = {}
+        self.tt = TranspositionTable(self.use_tt)
         return self.alphabeta(True, self.depth, -np.inf, np.inf, board)
-
-    def board_score_for_id(self, data):
-        if self.use_tt and self.tt_prev is not None and hash(data[0]) in self.tt_prev:
-            return self.tt_prev[hash(data[0])]
-        return 0
 
     def alphabeta(self, top, depth, lower, upper, board):
         # check transposition table for board state
-        if self.use_tt and hash(board) in self.tt_cur:
-            return self.tt_cur[hash(board)]
+        exists, value = self.tt.get_for_cache(board)
+        if exists:
+            return value
 
         # leaf node
         if depth == 0 or board.is_game_over():
             value = self.eval(board)
-            self.tt_cur[hash(board)] = value
+            self.tt.set(board, value)
             return value
 
         # track best move
@@ -46,7 +73,7 @@ class HexPlayerRandomAB(HexPlayer):
         # iterate over child nodes
         for child, move in sorted(
                 board.children(),
-                key=self.board_score_for_id,
+                key=self.tt.get_for_ordering,
                 reverse=board.turn() == self.colour,
         ):
             pass
@@ -68,7 +95,7 @@ class HexPlayerRandomAB(HexPlayer):
 
         # update transposition table
         value = lower if board.turn() == self.colour else upper
-        self.tt_cur[hash(board)] = value
+        self.tt.set(board, value)
 
         # return appropriate bound (or best move)
         if top:
@@ -95,14 +122,14 @@ class HexPlayerEnhancedAB(HexPlayerDijkstraAB):
         return 'ID' + ('TT' if self.use_tt else '') + '\n(timeout=' + str(self.depth) + 's)'
 
     def determine_move(self, board, renders):
+        self.tt = TranspositionTable(self.use_tt)
         stop = time() + self.depth
         alphabeta = None
 
         for i in count(1):
-            self.tt_prev = self.tt_cur
-            self.tt_cur = {}
             try:
                 alphabeta = func_timeout(stop - time(), self.alphabeta, (True, i, -np.inf, np.inf, board))
             except FunctionTimedOut:
                 return alphabeta
             self.reached = i
+            self.tt.rotate()

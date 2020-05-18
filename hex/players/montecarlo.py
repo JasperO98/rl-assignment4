@@ -9,11 +9,11 @@ class CacheMCTS:
     def __init__(self):
         self.data = {}
 
-    def get(self, item):
-        item = hash(item)
-        if item not in self.data:
-            self.data[item] = [0, 0]
-        return self.data[item]
+    def get(self, board):
+        board = hash(board)
+        if board not in self.data:
+            self.data[board] = [0, 0]
+        return self.data[board]
 
 
 class HexPlayerMonteCarloIterations(HexPlayer):
