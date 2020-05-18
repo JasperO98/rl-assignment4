@@ -53,7 +53,7 @@ class HexPlayerMonteCarloIterations(HexPlayer):
         data = np.array(list(map(self.cache.get, children))).T
         good = data[1] != 0
         uct = np.ones(len(children)) * np.inf
-        uct[good] = data[0, good] / data[1, good] + self.cp * np.sqrt(np.log(cached[1]) / data[1, good])
+        uct[good] = data[0, good] / data[1, good] + self.cp * np.sqrt(np.log(cached[1] - 1) / data[1, good])
         won = self.walk(children[np.argmax(uct)])
 
         if won:
