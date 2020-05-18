@@ -42,12 +42,12 @@ class HexPlayerMonteCarloIterations(HexPlayer):
         cached = self.cache.get(board)
         cached[1] += 1
 
-        if board.check_win(self.colour):
-            cached[0] += 1
-            return True
-
-        if board.check_win(-self.colour):
-            return False
+        if len(board.board) == board.size ** 2:
+            if board.check_win(self.colour):
+                cached[0] += 1
+                return True
+            else:
+                return False
 
         children = npr.permutation([child[0] for child in board.children()])
         data = np.array(list(map(self.cache.get, children))).T
