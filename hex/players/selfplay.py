@@ -135,7 +135,7 @@ class AlphaHexNN(NeuralNet):
 
 
 class ArgsCoach:
-    def __init__(self, hashed):
+    def __init__(self, hashed=False):
         self.hashed = hashed
         # iteration parameters
         self.numIters = 50
@@ -160,6 +160,7 @@ class ArgsCoach:
     def json(self):
         data = deepcopy(self.__dict__)
         del data['checkpoint']
+        del data['hashed']
         return data
 
     def init(self, size, name):
