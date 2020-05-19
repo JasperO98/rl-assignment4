@@ -170,6 +170,11 @@ class ArgsCoach:
         self.tempThreshold = size * 2 - 1
         self.checkpoint = 'models/' + str(size) + 'x' + str(size) + '/' + str(hash(self)) + '/' + name
 
+        if self.hashed:
+            with open(os.path.join(self.checkpoint, 'parameters.json'), 'r') as fp:
+                for key, value in json.load(fp).items():
+                    self.__setattr__(key, value)
+
     def __hash__(self):
         if self.hashed:
             return self.hashed
