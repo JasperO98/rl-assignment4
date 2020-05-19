@@ -30,7 +30,10 @@ class HexPlayerMonteCarloIterations(HexPlayer):
         self.monte_carlo(board, renders)
         children, moves = npr.permutation(list(board.children())).T
         data = np.array(list(map(self.cache.get, children))).T
-        return moves[np.argmax(data[0] / data[1])]
+        good = data[1] != 0
+        winrate = np.zeros(len(moves))
+        winrate[good] = data[0, good] / data[1, good]
+        return moves[np.argmax(winrate)]
 
     def monte_carlo(self, board, renders):
         for _ in (
