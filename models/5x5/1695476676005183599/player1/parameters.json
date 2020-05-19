@@ -1,0 +1,14 @@
+{
+  "numIters": 50,
+  "numEps": 50,
+  "numMCTSSims": 100,
+  "cpuct": 5,
+  "arenaCompare": 10,
+  "updateThreshold": 0.5,
+  "maxlenOfQueue": null,
+  "numItersForTrainExamplesHistory": 5,
+  "batch_size": 64,
+  "epochs": 10,
+  "depth": 3,
+  "tempThreshold": 9
+}

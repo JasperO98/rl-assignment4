@@ -1,20 +1,21 @@
 import setup
 from hex.tournament import HexTournament
-from hex.players.selfplay import AlphaZeroSelfPlay1
-
-
-def irange(start, stop, step=1):
-    return range(start, stop + 1, step)
-
+from hex.players.montecarlo import HexPlayerMonteCarloTime
+from hex.players.alphabeta import HexPlayerEnhancedAB
+from hex.players.base import HexPlayerRandom, HexPlayerHuman
+from hex.players.selfplay import AlphaZeroSelfPlay1, AlphaZeroSelfPlay2
 
 if __name__ == '__main__':
-    players = []
-    for i in irange(1, 20):
-        players.append(AlphaZeroSelfPlay1())
-        players[-1].coach_args.epochs = i
-    print(players)
+    players = [
+        HexPlayerHuman(),
+        HexPlayerRandom(),
+        HexPlayerMonteCarloTime(10, 1),
+        HexPlayerEnhancedAB(10, True),
+        AlphaZeroSelfPlay1(),
+        AlphaZeroSelfPlay2(),
+    ]
 
-    ht = HexTournament(5, players)
+    ht = HexTournament(7, players)
     ht.train()
     ht.tournament()
     ht.plots()

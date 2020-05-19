@@ -135,7 +135,8 @@ class AlphaHexNN(NeuralNet):
 
 
 class ArgsCoach:
-    def __init__(self):
+    def __init__(self, hashed=False):
+        self.hashed = hashed
         # iteration parameters
         self.numIters = 50
         self.numEps = 50
@@ -159,6 +160,7 @@ class ArgsCoach:
     def json(self):
         data = deepcopy(self.__dict__)
         del data['checkpoint']
+        del data['hashed']
         return data
 
     def init(self, size, name):
@@ -166,9 +168,11 @@ class ArgsCoach:
         self.checkpoint = 'models/' + str(size) + 'x' + str(size) + '/' + str(hash(self)) + '/' + name
 
     def __hash__(self):
+        if self.hashed:
+            return self.hashed
+
         return hash((
             self.numIters,
-            self.maxlenOfQueue,
             self.numEps,
             self.tempThreshold,
             self.numMCTSSims,
@@ -191,9 +195,9 @@ class ArgsMCTS:
 class AlphaZeroSelfPlay1(HexPlayer):
     NAME = 'player1'
 
-    def __init__(self):
+    def __init__(self, hashed=False):
         super().__init__()
-        self.coach_args = ArgsCoach()
+        self.coach_args = ArgsCoach(hashed)
         self.mcts_args = ArgsMCTS()
         self.mcts_class = None
 
@@ -214,7 +218,7 @@ class AlphaZeroSelfPlay1(HexPlayer):
                     'git', 'commit', '-m',
                     'add trained model (' + str(size) + 'x' + str(size) + ', ' + self.NAME + ', ' + str(hash(self.coach_args)) + ')',
                 ))
-                run(('git', 'pull'))
+                run(('git', 'pull', '--no-edit'))
                 run(('git', 'push'))
 
         net.load_checkpoint(self.coach_args.checkpoint, 'best.pth.tar')
