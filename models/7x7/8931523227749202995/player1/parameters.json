@@ -1,5 +1,4 @@
 {
-  "hashed": false,
   "numIters": 50,
   "numEps": 50,
   "numMCTSSims": 100,
