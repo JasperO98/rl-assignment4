@@ -163,6 +163,7 @@ class ArgsCoach:
         data = deepcopy(self.__dict__)
         del data['checkpoint']
         del data['hashed']
+        del data['maxlenOfQueue']
         return data
 
     def init(self, size, name):

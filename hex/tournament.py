@@ -106,7 +106,9 @@ class HexTournament:
         return Pool(min(cpu_count() - 1, len(iterable), 12))
 
     @staticmethod
-    def _save_plot(name):
+    def _save_plot(name, xlabel, ylabel):
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
         plt.tight_layout()
         plt.savefig(join('figures', name + '.pdf'))
         plt.close()
@@ -124,7 +126,7 @@ class HexTournament:
             capsize=20,
         )
         plt.colorbar(mapper).set_label('seconds per turn')
-        self._save_plot('tournament_ratings')
+        self._save_plot('tournament_ratings', None, 'TrueSkill Rating')
 
         plt.figure(figsize=(16, 8))
         for player, ratings in zip(self.players, self.ratings):
@@ -140,7 +142,7 @@ class HexTournament:
                 alpha=0.5,
             )
         plt.legend()
-        self._save_plot('tournament_convergence')
+        self._save_plot('tournament_convergence', 'Match #', 'TrueSkill Rating')
 
         plt.figure(figsize=(16, 8))
         for player, ratings, durations in zip(self.players, self.ratings, self.durations):
@@ -153,4 +155,4 @@ class HexTournament:
                 label=str(player),
             )
         plt.legend()
-        self._save_plot('tournament_tradeoff')
+        self._save_plot('tournament_tradeoff', 'Move Duration in Seconds', 'TrueSkill Rating')
