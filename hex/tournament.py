@@ -135,6 +135,7 @@ class HexTournament:
             ecolor='red',
             capsize=20,
         )
+        plt.xticks(rotation=90)
         plt.colorbar(mapper).set_label('seconds per turn')
         self._save_plot('tournament_ratings', None, 'TrueSkill Rating')
 
@@ -151,7 +152,7 @@ class HexTournament:
                 y2=[rating.mu + rating.sigma for rating in ratings],
                 alpha=0.5,
             )
-        plt.legend()
+        plt.legend(ncol=2)
         self._save_plot('tournament_convergence', 'Match #', 'TrueSkill Rating')
 
         plt.figure(figsize=(16, 8))
@@ -164,5 +165,5 @@ class HexTournament:
                 fmt='o',
                 label=str(player),
             )
-        plt.legend()
+        plt.legend(ncol=2)
         self._save_plot('tournament_tradeoff', 'Move Duration in Seconds', 'TrueSkill Rating')
