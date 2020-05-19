@@ -10,6 +10,7 @@ import tensorflow as tf
 from matplotlib.cm import ScalarMappable
 from os.path import join
 from hex.players.base import HexPlayerHuman
+from hex.players.selfplay import AlphaZeroSelfPlay1, AlphaZeroSelfPlay2
 import cv2 as cv
 import numpy.random as npr
 import pickle
@@ -106,12 +107,18 @@ class HexTournament:
         return Pool(min(cpu_count() - 1, len(iterable), 12))
 
     @staticmethod
-    def _save_plot(name):
+    def _save_plot(name, xlabel, ylabel):
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
         plt.tight_layout()
         plt.savefig(join('figures', name + '.pdf'))
         plt.close()
 
     def plots(self):
+        for player in self.players:
+            if isinstance(player, AlphaZeroSelfPlay1) or isinstance(player, AlphaZeroSelfPlay2):
+                player.setup(self.size)
+
         plt.figure(figsize=(16, 8))
         mapper = ScalarMappable(cmap='Greys')
         plt.bar(
@@ -124,7 +131,7 @@ class HexTournament:
             capsize=20,
         )
         plt.colorbar(mapper).set_label('seconds per turn')
-        self._save_plot('tournament_ratings')
+        self._save_plot('tournament_ratings', None, 'TrueSkill Rating')
 
         plt.figure(figsize=(16, 8))
         for player, ratings in zip(self.players, self.ratings):
@@ -140,7 +147,7 @@ class HexTournament:
                 alpha=0.5,
             )
         plt.legend()
-        self._save_plot('tournament_convergence')
+        self._save_plot('tournament_convergence', 'Match #', 'TrueSkill Rating')
 
         plt.figure(figsize=(16, 8))
         for player, ratings, durations in zip(self.players, self.ratings, self.durations):
@@ -153,4 +160,4 @@ class HexTournament:
                 label=str(player),
             )
         plt.legend()
-        self._save_plot('tournament_tradeoff')
+        self._save_plot('tournament_tradeoff', 'Move Duration in Seconds', 'TrueSkill Rating')

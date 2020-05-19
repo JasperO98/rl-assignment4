@@ -15,6 +15,7 @@ from scipy.ndimage.measurements import label
 import json
 from subprocess import run
 from filelock import FileLock
+from keras.utils import plot_model
 
 
 class AlphaHexGame(Game):
@@ -95,6 +96,7 @@ class AlphaHexNN(NeuralNet):
         model = Model(inputs=inputs, outputs=(pi, v))
         model.compile(optimizer=Adam(), loss=('categorical_crossentropy', 'mean_squared_error'))
 
+        plot_model(model, os.path.join('figures', 'model.' + str(self.input[0]) + 'x' + str(self.input[1]) + '.pdf'))
         return model
 
     def __init__(self, game):
@@ -161,6 +163,7 @@ class ArgsCoach:
         data = deepcopy(self.__dict__)
         del data['checkpoint']
         del data['hashed']
+        del data['maxlenOfQueue']
         return data
 
     def init(self, size, name):
