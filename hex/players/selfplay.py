@@ -96,7 +96,7 @@ class AlphaHexNN(NeuralNet):
         model = Model(inputs=inputs, outputs=(pi, v))
         model.compile(optimizer=Adam(), loss=('categorical_crossentropy', 'mean_squared_error'))
 
-        plot_model(model, os.path.join('figures', 'model.pdf'))
+        plot_model(model, os.path.join('figures', 'model.' + str(self.input[0]) + 'x' + str(self.input[1]) + '.pdf'))
         return model
 
     def __init__(self, game):
