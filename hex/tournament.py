@@ -119,6 +119,11 @@ class HexTournament:
             if isinstance(player, AlphaZeroSelfPlay1) or isinstance(player, AlphaZeroSelfPlay2):
                 player.setup(self.size)
 
+        order = [ratings[-1].mu for ratings in self.ratings]
+        self.players = [s[1] for s in sorted(zip(order, self.players), reverse=True)]
+        self.durations = [s[1] for s in sorted(zip(order, self.durations), reverse=True)]
+        self.ratings = [s[1] for s in sorted(zip(order, self.ratings), reverse=True)]
+
         plt.figure(figsize=(16, 8))
         mapper = ScalarMappable(cmap='Greys')
         plt.bar(
