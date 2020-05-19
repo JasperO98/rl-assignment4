@@ -10,6 +10,7 @@ import tensorflow as tf
 from matplotlib.cm import ScalarMappable
 from os.path import join
 from hex.players.base import HexPlayerHuman
+from hex.players.selfplay import AlphaZeroSelfPlay1, AlphaZeroSelfPlay2
 import cv2 as cv
 import numpy.random as npr
 import pickle
@@ -114,6 +115,10 @@ class HexTournament:
         plt.close()
 
     def plots(self):
+        for player in self.players:
+            if isinstance(player, AlphaZeroSelfPlay1) or isinstance(player, AlphaZeroSelfPlay2):
+                player.setup(self.size)
+
         plt.figure(figsize=(16, 8))
         mapper = ScalarMappable(cmap='Greys')
         plt.bar(
