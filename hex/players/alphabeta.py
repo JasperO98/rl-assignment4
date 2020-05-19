@@ -21,21 +21,13 @@ class TranspositionTable:
 
     def get_for_cache(self, board):
         if not self.enabled:
-            return False, None
-
-        board = hash(board)
-        if board not in self.cur:
-            return False, None
-        return True, self.cur[board]
+            return None
+        return self.cur.get(hash(board), None)
 
     def get_for_ordering(self, child):
         if not self.enabled:
             return 0
-
-        child = hash(child[0])
-        if child not in self.prev:
-            return 0
-        return self.prev[child]
+        return self.prev.get(hash(child[0]), 0)
 
 
 class HexPlayerRandomAB(HexPlayer):
@@ -57,8 +49,8 @@ class HexPlayerRandomAB(HexPlayer):
 
     def alphabeta(self, top, depth, lower, upper, board):
         # check transposition table for board state
-        exists, value = self.tt.get_for_cache(board)
-        if exists:
+        value = self.tt.get_for_cache(board)
+        if value is not None:
             return value
 
         # leaf node
